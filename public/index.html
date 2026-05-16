@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>WarZone: Ukraine Conflict RP</title>
+    <style>
+        :root {
+            --bg: #08080c;
+            --panel: #0e0e16;
+            --border: #1e1e2a;
+            --text: #c0c0cc;
+            --gold: #c8a840;
+            --rus-red: #b82828;
+            --rus-dark: #3a1018;
+            --ukr-blue: #2860b8;
+            --ukr-dark: #101c3a;
+            --orange: #c87028;
+            --danger: #cc2222;
+            --success: #3a8a3a;
+            --info: #2868a8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        #app {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            height: 100vh;
+            height: 100dvh;
+        }
+
+        /* ========== ЛЕВАЯ ПАНЕЛЬ - КАРТА ========== */
+        #map-panel {
+            background: #060a08;
+            border-right: 2px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #map-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .loc-bg {
+            fill: #0a100a;
+            stroke: #1a2a1a;
+            stroke-width: 1;
+            rx: 8;
+            ry: 8;
+        }
+
+        .loc-name {
+            fill: #aaa;
+            font-size: 10px;
+            font-weight: bold;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        .loc-district {
+            fill: #555;
+            stroke: #333;
+            stroke-width: 1;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .loc-district.russia { fill: rgba(160, 30, 30, 0.5); stroke: #cc3333; }
+        .loc-district.ukraine { fill: rgba(30, 60, 160, 0.5); stroke: #3366cc; }
+        .loc-district.contested { 
+            fill: rgba(200, 100, 20, 0.45); 
+            stroke: #d4782a;
+            animation: contestedGlow 2.5s infinite;
+        }
+
+        @keyframes contestedGlow {
+            0%, 100% { stroke-opacity: 0.6; stroke-width: 1.5; }
+            50% { stroke-opacity: 1; stroke-width: 3; }
+        }
+
+        .player-dot {
+            transition: all 0.5s ease;
+            pointer-events: none;
+        }
+
+        /* Подсказка при наведении */
+        .map-tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            border: 1px solid #444;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            pointer-events: none;
+            display: none;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        /* Легенда */
+        #map-legend {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.85);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.78rem;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+        }
+
+        #map-legend h4 {
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .legend-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 3px 0;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .legend-dot.russia { background: var(--rus-red); }
+        .legend-dot.ukraine { background: var(--ukr-blue); }
+        .legend-dot.contested { background: var(--orange); animation: contestedGlow 1.5s infinite; }
+
+        /* ========== ПРАВАЯ ПАНЕЛЬ - ЧАТ ========== */
+        #chat-panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--panel);
+            height: 100%;
+        }
+
+        /* Экран выбора */
+        #auth-screen {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 12px;
+            border-bottom: 2px solid var(--border);
+            background: #101018;
+            overflow-y: auto;
+            max-height: 45vh;
+        }
+
+        #auth-screen.hidden { display: none; }
+
+        #auth-screen h2 {
+            text-align: center;
+            color: var(--gold);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .step-label {
+            color: #888;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* Выбор фракции */
+        .faction-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .faction-card {
+            padding: 12px;
+            border: 3px solid #222;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            background: transparent;
+            color: #fff;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .faction-card.russia-card { border-color: #4a1a1a; }
+        .faction-card.russia-card:hover, .faction-card.russia-card.selected {
+            background: var(--rus-dark);
+            border-color: var(--rus-red);
+            box-shadow: 0 0 30px rgba(200,30,30,0.3);
+        }
+
+        .faction-card.ukraine-card { border-color: #1a2a4a; }
+        .faction-card.ukraine-card:hover, .faction-card.ukraine-card.selected {
+            background: var(--ukr-dark);
+            border-color: var(--ukr-blue);
+            box-shadow: 0 0 30px rgba(30,80,200,0.3);
+        }
+
+        /* Сетка подразделений */
+        .units-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .unit-card {
+            padding: 10px;
+            border: 2px solid #2a2a2a;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #14141c;
+            text-align: center;
+        }
+
+        .unit-card:hover, .unit-card.selected {
+            border-color: var(--gold);
+            background: #1a1a28;
+        }
+
+        .unit-card .unit-emblem {
+            font-size: 1.8rem;
+            display: block;
+        }
+
+        .unit-card .unit-name {
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        .unit-card .unit-desc {
+            font-size: 0.65rem;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        /* Форма персонажа */
+        #char-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #char-form input, #char-form select {
+            padding: 10px 12px;
+            background: #1a1a24;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        #char-form select {
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            padding: 12px;
+            background: var(--gold);
+            color: #000;
+            border: none;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #ddb850;
+            box-shadow: 0 0 20px rgba(200,168,64,0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #444;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        /* Инфобар игрока */
+        #player-bar {
+            display: none;
+            padding: 8px 14px;
+            background: #0c0c16;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.78rem;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        #player-bar.active { display: flex; }
+
+        .player-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hp-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hp-bar-outer {
+            width: 80px;
+            height: 6px;
+            background: #222;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .hp-bar-inner {
+            height: 100%;
+            background: #4a4;
+            transition: width 0.4s;
+            border-radius: 3px;
+        }
+        .hp-bar-inner.medium { background: #aa4; }
+        .hp-bar-inner.low { background: #a44; }
+        .hp-bar-inner.critical { background: #a22; animation: blink 0.5s infinite; }
+
+        @keyframes blink {
+            50% { opacity: 0.3; }
+        }
+
+        /* Окно сообщений */
+        #messages-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .msg {
+            padding: 8px 12px;
+            border-radius: 8px;
+            max-width: 88%;
+            animation: msgIn 0.3s;
+            line-height: 1.45;
+            font-size: 0.85rem;
+            word-break: break-word;
+        }
+
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .msg.ai {
+            background: #141420;
+            border-left: 3px solid var(--gold);
+            color: #ccc;
+            align-self: flex-start;
+            white-space: pre-wrap;
+        }
+
+        .msg.commander {
+            background: #1a1420;
+            border-left: 3px solid #a040d0;
+            color: #d0c0e0;
+            align-self: flex-start;
+        }
+
+        .msg.player {
+            background: #141c14;
+            border-right: 3px solid #4a7a4a;
+            color: #b8c8b8;
+            align-self: flex-end;
+        }
+
+        .msg.system {
+            background: #181818;
+            color: #777;
+            align-self: center;
+            font-style: italic;
+            font-size: 0.78rem;
+            text-align: center;
+            border: 1px solid #252525;
+            max-width: 95%;
+        }
+
+        .msg.kill {
+            background: #1a1010;
+            border: 1px solid #4a2020;
+            color: #d08080;
+            align-self: center;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .msg.control {
+            background: #101a10;
+            border: 1px solid #2a4a2a;
+            color: #80c080;
+            align-self: center;
+            text-align: center;
+        }
+
+        /* Поле ввода */
+        #input-area {
+            padding: 10px;
+            border-top: 2px solid var(--border);
+            display: flex;
+            gap: 6px;
+            background: #0e0e16;
+        }
+
+        #action-input {
+            flex: 1;
+            padding: 10px 14px;
+            background: #1a1a24;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            min-width: 0;
+        }
+
+        #action-input:disabled {
+            opacity: 0.4;
+        }
+
+        .btn-send {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--gold);
+            color: #000;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .btn-send:disabled {
+            background: #333;
+            color: #666;
+        }
+
+        /* Кнопки быстрых действий */
+        #quick-actions {
+            display: none;
+            padding: 6px 10px;
+            gap: 5px;
+            flex-wrap: wrap;
+            border-top: 1px solid var(--border);
+            background: #0a0a12;
+        }
+
+        #quick-actions.active { display: flex; }
+
+        .quick-btn {
+            padding: 6px 10px;
+            background: #1a1a28;
+            border: 1px solid #333;
+            color: #bbb;
+            border-radius: 14px;
+            font-size: 0.72rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .quick-btn:active {
+            background: #333;
+            border-color: #555;
+        }
+
+        .quick-btn.danger { border-color: #4a2020; color: #e88; }
+        .quick-btn.move { border-color: #2a3a4a; color: #8ae; }
+        .quick-btn.order { border-color: #3a2a4a; color: #c8a; }
+
+        /* Адаптив для телефонов */
+        @media (max-width: 768px) {
+            #app {
+                grid-template-columns: 1fr;
+                grid-template-rows: 35vh 1fr;
+            }
+
+            #map-panel {
+                border-right: none;
+                border-bottom: 2px solid var(--border);
+            }
+
+            #auth-screen {
+                max-height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- ========== КАРТА ========== -->
+        <div id="map-panel">
+            <svg id="map-svg" viewBox="0 0 600 500"></svg>
+            <div class="map-tooltip" id="map-tooltip"></div>
+            <div id="map-legend">
+                <h4>📍 КАРТА</h4>
+                <div class="legend-row"><span class="legend-dot russia"></span> РФ: <b id="rus-total">0</b></div>
+                <div class="legend-row"><span class="legend-dot ukraine"></span> ВСУ: <b id="ukr-total">0</b></div>
+                <div class="legend-row"><span class="legend-dot contested"></span> Бои: <b id="cont-total">0</b></div>
+                <div style="margin-top:6px;font-size:0.7rem;color:#888;">👥 <span id="players-online">0</span> бойцов</div>
+            </div>
+        </div>
+
+        <!-- ========== ЧАТ-ПАНЕЛЬ ========== -->
+        <div id="chat-panel">
+            <!-- Экран авторизации -->
+            <div id="auth-screen">
+                <h2>⚔️ WARZONE RP</h2>
+                <span class="step-label">Шаг 1: Выбери сторону</span>
+                <div class="faction-grid" id="faction-grid">
+                    <button class="faction-card russia-card" data-faction="russia" onclick="selectFaction('russia')">
+                        🇷🇺 ВС РФ
+                    </button>
+                    <button class="faction-card ukraine-card" data-faction="ukraine" onclick="selectFaction('ukraine')">
+                        🇺🇦 ВСУ
+                    </button>
+                </div>
+
+                <span class="step-label" id="unit-label" style="display:none;">Шаг 2: Выбери подразделение</span>
+                <div class="units-grid" id="units-grid" style="display:none;"></div>
+
+                <div id="char-form" style="display:none;">
+                    <span class="step-label">Шаг 3: Создай бойца</span>
+                    <input type="text" id="inp-name" placeholder="Позывной" maxlength="20">
+                    <select id="inp-class">
+                        <option value="rifleman">🔫 Стрелок</option>
+                        <option value="sniper">🎯 Снайпер</option>
+                        <option value="medic">💉 Медик</option>
+                        <option value="engineer">🔧 Инженер</option>
+                        <option value="commander">⭐ Командир отделения</option>
+                    </select>
+                    <input type="text" id="inp-look" placeholder="Внешность (шрамы, борода, каска...)" maxlength="50">
+                    <button class="btn-primary" id="btn-join" onclick="joinGame()">🪖 НА ФРОНТ</button>
+                </div>
+            </div>
+
+            <!-- Инфобар -->
+            <div id="player-bar">
+                <div class="player-tag">
+                    <span id="unit-flag"></span>
+                    <b id="disp-name">—</b>
+                </div>
+                <span style="font-size:0.7rem;">📍 <span id="disp-position">—</span></span>
+                <div class="hp-indicator">
+                    ❤️ <span id="disp-hp">100</span>
+                    <div class="hp-bar-outer"><div class="hp-bar-inner" id="hp-fill" style="width:100%"></div></div>
+                </div>
+                <button class="quick-btn order" onclick="getCommanderOrder()" style="font-size:0.7rem;">📻 Приказ</button>
+            </div>
+
+            <!-- Сообщения -->
+            <div id="messages-box"></div>
+
+            <!-- Быстрые действия -->
+            <div id="quick-actions">
+                <button class="quick-btn move" onclick="quickAction('Осматриваю позицию')">🔍 Осмотреться</button>
+                <button class="quick-btn" onclick="quickAction('Атакую противника')">⚔️ Атака</button>
+                <button class="quick-btn" onclick="quickAction('Укрепляю позицию')">🛡 Укреп</button>
+                <button class="quick-btn move" onclick="quickAction('Перемещаюсь на соседний слот')">🚶 Сменить слот</button>
+                <button class="quick-btn danger" onclick="quickAction('Отхожу в укрытие')">🏳️ Отойти</button>
+                <button class="quick-btn" onclick="quickAction('Провожу разведку')">🔭 Разведка</button>
+            </div>
+
+            <!-- Ввод -->
+            <div id="input-area">
+                <input type="text" id="action-input" placeholder="Опиши действие..." disabled>
+                <button class="btn-send" id="btn-send" disabled onclick="sendAction()">▶</button>
+            </div>
+        </div>
+    </div>
+        <script>
+        // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
+        let player = null;
+        let selectedFaction = null;
+        let selectedUnit = null;
+        let gameState = { locations: {}, players: {}, locationControl: {}, squads: {} };
+        let allUnits = {};
+
+        // ========== ЮНИТЫ (загружаются с сервера) ==========
+        const UNIT_EMOJI = {
+            russia: { somali: '🦂', pyatnashka: '1️⃣5️⃣', sparta: '⚔️', wolves: '🐺' },
+            ukraine: { azov: '🔱', aidar: '⚔️', kraken: '🐙', ghost: '💀' }
+        };
+
+        // ========== ВЫБОР ФРАКЦИИ ==========
+        function selectFaction(faction) {
+            selectedFaction = faction;
+            selectedUnit = null;
+
+            // Подсветка
+            document.querySelectorAll('.faction-card').forEach(c => c.classList.remove('selected'));
+            document.querySelector(`[data-faction="${faction}"]`).classList.add('selected');
+
+            // Показываем подразделения
+            document.getElementById('unit-label').style.display = 'block';
+            const grid = document.getElementById('units-grid');
+            grid.style.display = 'grid';
+            grid.innerHTML = '';
+
+            const units = faction === 'russia' ? 
+                ['somali', 'pyatnashka', 'sparta', 'wolves'] : 
+                ['azov', 'aidar', 'kraken', 'ghost'];
+
+            const unitNames = {
+                somali: 'Сомали', pyatnashka: 'Пятнашка', sparta: 'Спарта', wolves: 'Волки',
+                azov: 'Азов', aidar: 'Айдар', kraken: 'Кракен', ghost: 'Призрак'
+            };
+            const unitDescs = {
+                somali: 'Штурмовая пехота', pyatnashka: 'Интербригада', sparta: 'Разведбат', wolves: 'Спецназ ГРУ',
+                azov: 'Штурмовая бригада', aidar: 'Добровольцы', kraken: 'ДРГ', ghost: 'Снайперы'
+            };
+
+            units.forEach(uid => {
+                const card = document.createElement('div');
+                card.className = 'unit-card';
+                card.onclick = () => selectUnit(uid);
+                card.dataset.unit = uid;
+                card.innerHTML = `
+                    <span class="unit-emblem">${UNIT_EMOJI[faction][uid]}</span>
+                    <div class="unit-name">${unitNames[uid]}</div>
+                    <div class="unit-desc">${unitDescs[uid]}</div>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('char-form').style.display = 'none';
+            document.getElementById('btn-join').disabled = true;
+        }
+
+        // ========== ВЫБОР ПОДРАЗДЕЛЕНИЯ ==========
+        function selectUnit(unitId) {
+            selectedUnit = unitId;
+            document.querySelectorAll('.unit-card').forEach(c => c.classList.remove('selected'));
+            document.querySelector(`[data-unit="${unitId}"]`).classList.add('selected');
+            document.getElementById('char-form').style.display = 'flex';
+            document.getElementById('btn-join').disabled = false;
+            document.getElementById('inp-name').focus();
+        }
+
+        // ========== ВСТУПЛЕНИЕ В ИГРУ ==========
+        async function joinGame() {
+            const name = document.getElementById('inp-name').value.trim();
+            const charClass = document.getElementById('inp-class').value;
+            const look = document.getElementById('inp-look').value.trim();
+
+            if (!name) return shakeElement(document.getElementById('inp-name'));
+            if (!selectedFaction || !selectedUnit) return addMessage('system', '❌ Выбери сторону и подразделение!');
+
+            document.getElementById('btn-join').disabled = true;
+            document.getElementById('btn-join').textContent = '⏳ Загрузка...';
+
+            try {
+                const resp = await fetch('/api/join', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name, faction: selectedFaction, unitId: selectedUnit, charClass, look
+                    })
+                });
+
+                const data = await resp.json();
+                if (data.error) return addMessage('system', '❌ ' + data.error);
+
+                player = data.player;
+
+                // Скрываем авторизацию
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('player-bar').classList.add('active');
+                document.getElementById('quick-actions').classList.add('active');
+                document.getElementById('action-input').disabled = false;
+                document.getElementById('btn-send').disabled = false;
+
+                // Показываем юнит
+                document.getElementById('unit-flag').textContent = data.unit.emblem;
+                document.getElementById('disp-name').textContent = player.name;
+
+                // Приветствие
+                addMessage('commander', `📻 **${data.unit.commanderName}** (${data.unit.emblem} ${data.unit.name}):\n${data.greeting}`);
+                addMessage('system', `🪖 Ты прибыл на фронт. Позывной: **${name}**. Подразделение: ${data.unit.emblem} ${data.unit.name}.`);
+
+                updatePlayerUI();
+                updateMap();
+                document.getElementById('action-input').focus();
+
+                // Первый приказ через 3 секунды
+                setTimeout(() => getCommanderOrder(true), 3000);
+
+            } catch (e) {
+                addMessage('system', '❌ Ошибка соединения с сервером');
+                document.getElementById('btn-join').disabled = false;
+                document.getElementById('btn-join').textContent = '🪖 НА ФРОНТ';
+            }
+        }
+
+        // ========== ОТПРАВКА ДЕЙСТВИЯ ==========
+        async function sendAction() {
+            const input = document.getElementById('action-input');
+            const action = input.value.trim();
+            if (!action || !player) return;
+
+            addMessage('player', `**${player.name}:** ${action}`);
+            input.value = '';
+            setInputEnabled(false);
+
+            try {
+                const resp = await fetch('/api/action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ playerId: player.id, action })
+                });
+
+                const data = await resp.json();
+                if (data.error) {
+                    addMessage('system', '❌ ' + data.error);
+                    setInputEnabled(true);
+                    return;
+                }
+
+                // Нарратив
+                if (data.narrative) {
+                    addMessage('ai', data.narrative);
+                }
+
+                // Системное сообщение
+                if (data.gameUpdate?.systemMessage) {
+                    const msg = data.gameUpdate.systemMessage;
+                    if (msg.includes('💀')) addMessage('kill', msg);
+                    else if (msg.includes('захвачен') || msg.includes('контроль')) addMessage('control', msg);
+                    else addMessage('system', msg);
+                }
+
+                // Обновление игрока
+                if (data.gameUpdate?.playerChanges) {
+                    Object.assign(player, data.gameUpdate.playerChanges);
+                }
+
+                updatePlayerUI();
+                updateMap();
+
+                // Проверка смерти
+                if (player.hp <= 0) {
+                    handleDeath();
+                }
+
+            } catch (e) {
+                addMessage('system', '⚡ Потеря связи...');
+            }
+
+            setInputEnabled(true);
+            input.focus();
+        }
+
+        // ========== БЫСТРОЕ ДЕЙСТВИЕ ==========
+        function quickAction(action) {
+            document.getElementById('action-input').value = action;
+            sendAction();
+        }
+
+        // ========== ПРИКАЗ КОМАНДИРА ==========
+        async function getCommanderOrder(silent = false) {
+            if (!player) return;
+
+            try {
+                const resp = await fetch(`/api/commander/${player.id}`);
+                const data = await resp.json();
+
+                if (data.order) {
+                    addMessage('commander', `📻 **${data.commanderName}** ${data.unitEmblem}:\n${data.order}`);
+                }
+            } catch (e) {
+                if (!silent) addMessage('system', '📻 Радио молчит...');
+            }
+        }
+
+        // ========== ОБРАБОТКА СМЕРТИ ==========
+        function handleDeath() {
+            addMessage('kill', `💀 **${player.name}** погиб в бою. Слава герою!`);
+            addMessage('system', '🔄 Ты можешь создать нового бойца. Обнови страницу.');
+            setInputEnabled(false);
+            document.getElementById('quick-actions').classList.remove('active');
+
+            // Показываем кнопку респавна
+            const btn = document.createElement('button');
+            btn.className = 'btn-primary';
+            btn.textContent = '🔄 НОВЫЙ БОЕЦ';
+            btn.style.margin = '10px';
+            btn.onclick = () => location.reload();
+            document.getElementById('messages-box').appendChild(btn);
+        }
+
+        // ========== ОБНОВЛЕНИЕ UI ИГРОКА ==========
+        function updatePlayerUI() {
+            if (!player) return;
+            document.getElementById('disp-name').textContent = player.name;
+            document.getElementById('disp-hp').textContent = player.hp;
+
+            // HP бар
+            const hpFill = document.getElementById('hp-fill');
+            hpFill.style.width = player.hp + '%';
+            hpFill.className = 'hp-bar-inner';
+            if (player.hp <= 20) hpFill.classList.add('critical');
+            else if (player.hp <= 40) hpFill.classList.add('low');
+            else if (player.hp <= 60) hpFill.classList.add('medium');
+
+            // Позиция
+            if (gameState.locations[player.location]) {
+                const loc = gameState.locations[player.location];
+                const district = loc.districts?.[player.district];
+                const position = district?.positions?.[player.position];
+                let posText = loc.name;
+                if (district) posText += ' → ' + district.name;
+                if (position) posText += ' → ' + position.name;
+                document.getElementById('disp-position').textContent = posText;
+            }
+        }
+
+        // ========== ОБНОВЛЕНИЕ КАРТЫ ==========
+        function updateMap() {
+            const svg = document.getElementById('map-svg');
+            let html = '';
+
+            // Рисуем локации
+            const locDefs = {
+                bakhmut: { x: 380, y: 260, name: 'Бахмут' },
+                avdeevka: { x: 360, y: 285, name: 'Авдеевка' },
+                kherson: { x: 240, y: 330, name: 'Херсон' },
+                donetsk: { x: 420, y: 300, name: 'Донецк' },
+                lugansk: { x: 480, y: 220, name: 'Луганск' },
+                zaporozhye: { x: 280, y: 280, name: 'Запорожье' },
+                kharkiv: { x: 420, y: 175, name: 'Харьков' },
+                mariupol: { x: 440, y: 345, name: 'Мариуполь' },
+                soledar: { x: 400, y: 240, name: 'Соледар' },
+                ugledar: { x: 400, y: 320, name: 'Угледар' }
+            };
+
+            Object.entries(locDefs).forEach(([id, def]) => {
+                const control = gameState.locationControl?.[id];
+                let controlClass = 'contested';
+                let rusPct = 50, ukrPct = 50;
+
+                if (control) {
+                    rusPct = control.russia;
+                    ukrPct = control.ukraine;
+                    if (rusPct >= 65) controlClass = 'russia';
+                    else if (ukrPct >= 65) controlClass = 'ukraine';
+                } else if (gameState.locations[id]) {
+                    // Fallback
+                    const c = gameState.locations[id];
+                    if (c.control === 'russia') { controlClass = 'russia'; rusPct = 80; ukrPct = 20; }
+                    else if (c.control === 'ukraine') { controlClass = 'ukraine'; rusPct = 20; ukrPct = 80; }
+                }
+
+                html += `
+                    <rect class="loc-district ${controlClass}" 
+                          x="${def.x - 25}" y="${def.y - 18}" 
+                          width="50" height="36" rx="6"
+                          data-loc="${id}"
+                          onmouseover="showTooltip(event, '${def.name}: РФ ${rusPct}% / ВСУ ${ukrPct}%')"
+                          onmouseout="hideTooltip()"/>
+                    <text x="${def.x}" y="${def.y + 4}" class="loc-name">${def.name}</text>
+                `;
+            });
+
+            // Рисуем игроков
+            Object.values(gameState.players).forEach(p => {
+                if (!p.alive) return;
+                const def = locDefs[p.location];
+                if (!def) return;
+                const color = p.faction === 'russia' ? '#ff4444' : '#4488ff';
+                const offsetX = (Math.sin(p.id.length * 2.7) * 18);
+                const offsetY = (Math.cos(p.id.length * 2.7) * 12);
+                html += `
+                    <circle cx="${def.x + offsetX}" cy="${def.y + offsetY}" r="4" 
+                            fill="${color}" stroke="white" stroke-width="1" class="player-dot">
+                        <title>${p.name} [${p.unit}]</title>
+                    </circle>
+                `;
+            });
+
+            svg.innerHTML = html;
+
+            // Статистика
+            let rusTotal = 0, ukrTotal = 0, contTotal = 0;
+            Object.values(gameState.locationControl || {}).forEach(c => {
+                if (c.russia >= 65) rusTotal++;
+                else if (c.ukraine >= 65) ukrTotal++;
+                else contTotal++;
+            });
+
+            document.getElementById('rus-total').textContent = rusTotal;
+            document.getElementById('ukr-total').textContent = ukrTotal;
+            document.getElementById('cont-total').textContent = contTotal;
+
+            const alivePlayers = Object.values(gameState.players).filter(p => p.alive).length;
+            document.getElementById('players-online').textContent = alivePlayers;
+        }
+
+        // ========== ТУЛТИП КАРТЫ ==========
+        function showTooltip(event, text) {
+            const tooltip = document.getElementById('map-tooltip');
+            tooltip.textContent = text;
+            tooltip.style.display = 'block';
+            tooltip.style.left = (event.offsetX + 15) + 'px';
+            tooltip.style.top = (event.offsetY - 30) + 'px';
+        }
+
+        function hideTooltip() {
+            document.getElementById('map-tooltip').style.display = 'none';
+        }
+
+        // ========== СООБЩЕНИЯ В ЧАТ ==========
+        function addMessage(type, text) {
+            const box = document.getElementById('messages-box');
+            const div = document.createElement('div');
+            div.className = 'msg ' + type;
+            div.innerHTML = text.replace(/\n/g, '<br>');
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // ========== ВСПОМОГАТЕЛЬНЫЕ ==========
+        function setInputEnabled(enabled) {
+            document.getElementById('action-input').disabled = !enabled;
+            document.getElementById('btn-send').disabled = !enabled;
+        }
+
+        function shakeElement(el) {
+            el.style.animation = 'none';
+            el.offsetHeight;
+            el.style.animation = 'shake 0.4s ease';
+            setTimeout(() => el.style.animation = '', 400);
+        }
+
+        // ========== ПЕРИОДИЧЕСКОЕ ОБНОВЛЕНИЕ ==========
+        async function pollGameState() {
+            try {
+                const resp = await fetch('/api/state');
+                const data = await resp.json();
+                gameState = data;
+                updateMap();
+
+                if (player && data.players[player.id]) {
+                    const serverPlayer = data.players[player.id];
+                    if (serverPlayer.hp !== player.hp || serverPlayer.location !== player.location) {
+                        player = serverPlayer;
+                        updatePlayerUI();
+                    }
+                    if (!serverPlayer.alive && player.alive) {
+                        player.alive = false;
+                        handleDeath();
+                    }
+                }
+            } catch (e) {}
+        }
+
+        // ========== ОБРАБОТЧИКИ КЛАВИШ ==========
+        document.getElementById('action-input').addEventListener('keypress', e => {
+            if (e.key === 'Enter') sendAction();
+        });
+
+        // Enter на форме персонажа
+        document.getElementById('inp-name').addEventListener('keypress', e => {
+            if (e.key === 'Enter') joinGame();
+        });
+
+        // ========== СТИЛИ ДЛЯ SHAKE ==========
+        const shakeStyle = document.createElement('style');
+        shakeStyle.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-8px); }
+                50% { transform: translateX(8px); }
+                75% { transform: translateX(-4px); }
+            }
+        `;
+        document.head.appendChild(shakeStyle);
+
+        // ========== ЗАПУСК ==========
+        function init() {
+            pollGameState();
+            setInterval(pollGameState, 8000);
+            addMessage('system', '⚔️ **WarZone RP** готова к бою.');
+            addMessage('system', '👆 Выбери сторону и подразделение, чтобы начать.');
+        }
+
+        init();
+    </script>
+</body>
+</html>
