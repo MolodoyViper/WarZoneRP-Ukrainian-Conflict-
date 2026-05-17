@@ -13,7 +13,6 @@
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; height: 100vh; height: 100dvh; overflow: hidden; touch-action: manipulation; }
         #app { display: grid; grid-template-columns: 1fr 1.2fr; height: 100vh; height: 100dvh; }
 
-        /* КАРТА */
         #map-panel { position: relative; overflow: hidden; border-right: 2px solid var(--border); background: #0d1a0d; }
         #map-svg { width: 100%; height: 100%; transition: transform 0.1s; transform-origin: center; }
         .map-bg-element { stroke: #1a3a1a; stroke-width: 0.5; fill: none; }
@@ -35,7 +34,6 @@
         #players-on-location { margin-top: 4px; font-size: 0.6rem; color: #aaa; max-height: 50px; overflow-y: auto; }
         #class-info { margin-top: 3px; font-size: 0.55rem; color: var(--gold); }
 
-        /* ЧАТ */
         #chat-panel { display: flex; flex-direction: column; background: var(--panel); height: 100%; overflow: hidden; }
         #auth-screen { padding: 12px; border-bottom: 2px solid var(--border); background: #101018; overflow-y: auto; flex-shrink: 0; }
         #auth-screen.hidden { display: none; }
@@ -97,8 +95,7 @@
         .quick-btn.move-btn { border-color: #2a4a2a; color: #8c8; }
         .quick-btn.heal-btn { border-color: #2a3a4a; color: #8ac; }
 
-        /* Кнопка музыки */
-        #music-btn { position: fixed; bottom: 12px; right: 12px; z-index: 500; width: 38px; height: 38px; border-radius: 50%; background: rgba(0,0,0,0.85); border: 1px solid var(--border); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        #music-btn { position: fixed; bottom: 70px; right: 12px; z-index: 500; width: 38px; height: 38px; border-radius: 50%; background: rgba(0,0,0,0.85); border: 1px solid var(--border); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
         @media (max-width: 768px) {
             #app { grid-template-columns: 1fr; grid-template-rows: 35vh 1fr; }
@@ -108,7 +105,6 @@
 </head>
 <body>
     <div id="app">
-        <!-- КАРТА -->
         <div id="map-panel">
             <svg id="map-svg" viewBox="0 0 600 500"></svg>
             <div id="map-legend">
@@ -123,7 +119,6 @@
             </div>
         </div>
 
-        <!-- ЧАТ -->
         <div id="chat-panel">
             <div id="auth-screen">
                 <h2>⚔️ WARZONE RP</h2>
@@ -184,7 +179,6 @@
         </div>
     </div>
 
-    <!-- Модалка профиля -->
     <div id="profile-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;">
         <div style="background:#1a1a24;border:1px solid #333;border-radius:12px;padding:20px;max-width:320px;width:90%;text-align:center;">
             <div id="profile-avatar" style="width:80px;height:80px;border-radius:50%;background:#222;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:40px;cursor:pointer;overflow:hidden;border:2px solid var(--gold);">
@@ -204,7 +198,6 @@
         </div>
     </div>
 
-    <!-- Модалка перемещения -->
     <div id="move-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center;">
         <div style="background:#1a1a24;border:1px solid #333;border-radius:10px;padding:15px;max-width:350px;width:90%;max-height:70vh;overflow-y:auto;">
             <h3 style="color:var(--gold);margin-bottom:10px;">🚶 Переместиться</h3>
@@ -213,10 +206,9 @@
         </div>
     </div>
 
-    <!-- Кнопка музыки -->
     <button id="music-btn" onclick="toggleMusic()">🔇</button>
-    <audio id="bg-music" loop style="display:none;">
-        <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_a56e5e3c47.mp3" type="audio/mpeg">
+    <audio id="bg-music" loop style="display:none;" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
     </audio>
 
     <script>
@@ -262,7 +254,6 @@
             kupiansk: { x: 460, y: 190, name: 'Купянск', neighbors: ['kharkiv','izyum'] }
         };
 
-        // ========== ФУНКЦИИ ==========
         function selectFaction(faction) {
             selectedFaction = faction; selectedUnit = null;
             document.querySelectorAll('.faction-card').forEach(c => c.classList.remove('selected'));
@@ -481,7 +472,6 @@
             } catch (e) {}
         }
 
-        // ========== ПРОФИЛЬ ==========
         function showProfile() {
             if (!player) return;
             document.getElementById('profile-name').textContent = player.name;
@@ -491,7 +481,6 @@
             document.getElementById('profile-hp').textContent = 'HP: ' + (player.hp || 0) + '/' + (player.maxHp || 100);
             document.getElementById('profile-kills').textContent = 'Убийств: ' + (player.kills || 0);
             document.getElementById('profile-deaths').textContent = 'Смертей: ' + (player.deaths || 0);
-            
             const savedAvatar = localStorage.getItem('warzone_avatar_' + player.id);
             if (savedAvatar) {
                 document.getElementById('profile-avatar-img').src = savedAvatar;
@@ -527,22 +516,24 @@
             if (e.target === this) this.style.display = 'none';
         });
 
-        // ========== МУЗЫКА ==========
         function toggleMusic() {
             const audio = document.getElementById('bg-music');
             const btn = document.getElementById('music-btn');
             if (musicPlaying) {
                 audio.pause();
                 btn.textContent = '🔇';
+                musicPlaying = false;
             } else {
-                audio.volume = 0.2;
-                audio.play().catch(() => {});
-                btn.textContent = '🔊';
+                audio.volume = 0.15;
+                audio.play().then(() => {
+                    btn.textContent = '🔊';
+                    musicPlaying = true;
+                }).catch(() => {
+                    addMessage('system', '🔇 Не удалось включить музыку. Нажми ещё раз.');
+                });
             }
-            musicPlaying = !musicPlaying;
         }
 
-        // ========== ЗУМ КАРТЫ ==========
         let mapZoom = 1, mapPanX = 0, mapPanY = 0;
         const mapSvg = document.getElementById('map-svg');
         const mapPanel = document.getElementById('map-panel');
@@ -590,7 +581,6 @@
             mapSvg.style.transform = 'translate(' + mapPanX + 'px, ' + mapPanY + 'px) scale(' + mapZoom + ')';
         }
 
-        // ========== UI ==========
         function updatePlayersOnLocation() {
             if (!player) return;
             const locPlayers = Object.values(gameState.players).filter(p => p.alive && p.location === player.location);
@@ -628,7 +618,6 @@
             let html = '';
             for (let i = 0; i < 600; i += 40) html += '<line x1="' + i + '" y1="0" x2="' + i + '" y2="500" class="map-bg-element"/>';
             for (let i = 0; i < 500; i += 40) html += '<line x1="0" y1="' + i + '" x2="600" y2="' + i + '" class="map-bg-element"/>';
-            
             Object.entries(LOC_COORDS).forEach(([id, loc]) => {
                 loc.neighbors.forEach(nid => {
                     const n = LOC_COORDS[nid];
@@ -639,23 +628,18 @@
                 if (c.control === 'russia' || c.russia >= 65) cls = 'russia';
                 else if (c.control === 'ukraine' || c.ukraine >= 65) cls = 'ukraine';
                 const isCurrent = player && player.location === id;
-                html += '<circle class="loc-point ' + cls + (isCurrent ? ' current' : '') + '" cx="' + loc.x + '" cy="' + loc.y + '" r="15" data-loc="' + id + '" onclick="clickOnMap(\'' + id + '\')"/>';
+                html += '<circle class="loc-point ' + cls + (isCurrent ? ' current' : '') + '" cx="' + loc.x + '" cy="' + loc.y + '" r="15" onclick="clickOnMap(\'' + id + '\')"/>';
                 html += '<text x="' + loc.x + '" y="' + (loc.y+4) + '" class="loc-label">' + loc.name.split(' ')[0] + '</text>';
-                
                 const locData = gameState.locations?.[id];
                 if (locData?.buildings?.length > 0) {
-                    const buildingText = locData.buildings.map(b => BUILDING_EMOJI[b] || '').join('');
-                    html += '<text x="' + loc.x + '" y="' + (loc.y-14) + '" class="building-icon" text-anchor="middle">' + buildingText + '</text>';
+                    html += '<text x="' + loc.x + '" y="' + (loc.y-14) + '" class="building-icon" text-anchor="middle">' + locData.buildings.map(b => BUILDING_EMOJI[b] || '').join('') + '</text>';
                 }
             });
-            
             Object.values(gameState.players).filter(p => p.alive).forEach(p => {
                 const loc = LOC_COORDS[p.location]; if (!loc) return;
-                html += '<circle cx="' + (loc.x+Math.sin(p.id.length*2.7)*12) + '" cy="' + (loc.y+Math.cos(p.id.length*2.7)*10) + '" r="4" fill="' + (p.faction==='russia'?'#ff4444':'#4488ff') + '" stroke="white" stroke-width="1" class="player-dot"><title>' + p.name + ' [' + (p.rank||'—') + ']</title></circle>';
+                html += '<circle cx="' + (loc.x+Math.sin(p.id.length*2.7)*12) + '" cy="' + (loc.y+Math.cos(p.id.length*2.7)*10) + '" r="4" fill="' + (p.faction==='russia'?'#ff4444':'#4488ff') + '" stroke="white" stroke-width="1" class="player-dot"><title>' + p.name + '</title></circle>';
             });
-            
             svg.innerHTML = html;
-            
             let rus=0,ukr=0,cont=0;
             Object.values(gameState.locationControl||{}).forEach(c=>{if(c.russia>=65)rus++;else if(c.ukraine>=65)ukr++;else cont++;});
             document.getElementById('rus-total').textContent=rus;
@@ -700,7 +684,6 @@
                 gameState = data;
                 updateMap();
                 updatePlayersOnLocation();
-
                 if (!player && savedPlayerId && data.players[savedPlayerId] && data.players[savedPlayerId].alive) {
                     player = data.players[savedPlayerId];
                     document.getElementById('auth-screen').classList.add('hidden');
@@ -720,7 +703,6 @@
                     updatePlayerUI(); updateMap(); updatePlayersOnLocation();
                     addMessage('system', '👋 С возвращением, ' + player.name + '!');
                 }
-
                 if (player && data.players[player.id]) {
                     const sp = data.players[player.id];
                     if (sp.hp !== player.hp || sp.maxHp !== player.maxHp || sp.rank !== player.rank || sp.supplies !== player.supplies) {
