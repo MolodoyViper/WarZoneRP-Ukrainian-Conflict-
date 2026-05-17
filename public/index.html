@@ -10,11 +10,7 @@
             --gold: #c8a840; --rus-red: #b82828; --ukr-blue: #2860b8; --orange: #c87028;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: var(--bg); color: var(--text);
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            height: 100vh; height: 100dvh; overflow: hidden; touch-action: manipulation;
-        }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; height: 100vh; height: 100dvh; overflow: hidden; touch-action: manipulation; }
         #app { display: grid; grid-template-columns: 1fr 1.2fr; height: 100vh; height: 100dvh; }
 
         /* КАРТА */
@@ -28,15 +24,16 @@
         .loc-point.current { stroke: #fff !important; stroke-width: 4 !important; stroke-dasharray: 4 2; animation: dashMove 1s linear infinite; }
         @keyframes pulse { 0%,100%{r:15} 50%{r:20} }
         @keyframes dashMove { to{stroke-dashoffset:-12} }
-        .loc-label { fill: #fff; font-size: 9px; font-weight: bold; text-anchor: middle; pointer-events: none; paint-order: stroke; stroke: #000; stroke-width: 3px; }
+        .loc-label { fill: #fff; font-size: 8px; font-weight: bold; text-anchor: middle; pointer-events: none; paint-order: stroke; stroke: #000; stroke-width: 3px; }
+        .building-icon { font-size: 10px; pointer-events: none; }
         .player-dot { transition: all 0.5s; pointer-events: none; }
-        #map-legend { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.9); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 0.68rem; z-index: 10; min-width: 140px; }
-        #map-legend h4 { color: var(--gold); margin-bottom: 4px; font-size: 0.75rem; }
+        #map-legend { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.9); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 0.65rem; z-index: 10; min-width: 140px; max-height: 50vh; overflow-y: auto; }
+        #map-legend h4 { color: var(--gold); margin-bottom: 4px; font-size: 0.7rem; }
         .legend-row { display: flex; align-items: center; gap: 4px; margin: 2px 0; }
         .legend-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
         .legend-dot.russia { background: var(--rus-red); } .legend-dot.ukraine { background: var(--ukr-blue); } .legend-dot.contested { background: var(--orange); }
-        #players-on-location { margin-top: 5px; font-size: 0.6rem; color: #aaa; max-height: 60px; overflow-y: auto; }
-        #class-info { margin-top: 4px; font-size: 0.6rem; color: var(--gold); }
+        #players-on-location { margin-top: 4px; font-size: 0.6rem; color: #aaa; max-height: 50px; overflow-y: auto; }
+        #class-info { margin-top: 3px; font-size: 0.55rem; color: var(--gold); }
 
         /* ЧАТ */
         #chat-panel { display: flex; flex-direction: column; background: var(--panel); height: 100%; overflow: hidden; }
@@ -54,37 +51,51 @@
         #char-form input, #char-form select { padding: 6px; background: #1a1a24; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 0.75rem; }
         .btn-primary { padding: 8px; background: var(--gold); color: #000; border: none; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
         .btn-primary:disabled { background: #444; color: #888; }
+        .btn-respawn { padding: 8px; background: #4a2020; color: #faa; border: 2px solid #8b0000; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-top: 5px; display: none; }
 
-        #player-bar { display: none; padding: 5px 8px; background: #0c0c16; border-bottom: 1px solid var(--border); font-size: 0.68rem; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 3px; flex-shrink: 0; }
+        #player-bar { display: none; padding: 5px 8px; background: #0c0c16; border-bottom: 1px solid var(--border); font-size: 0.65rem; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 3px; flex-shrink: 0; }
         #player-bar.active { display: flex; }
         .hp-bar-outer { width: 50px; height: 4px; background: #222; border-radius: 2px; overflow: hidden; }
         .hp-bar-inner { height: 100%; background: #4a4; transition: width 0.4s; }
         .hp-bar-inner.low { background: #a44; } .hp-bar-inner.critical { background: #a22; animation: blink 0.5s infinite; }
         @keyframes blink { 50%{opacity:0.3} }
 
+        /* Табы */
+        #tab-bar { display: none; padding: 3px 6px; gap: 3px; background: #0a0a12; border-bottom: 1px solid var(--border); }
+        #tab-bar.active { display: flex; }
+        .tab-btn { padding: 4px 8px; background: #1a1a28; border: 1px solid #333; color: #888; border-radius: 8px; font-size: 0.65rem; cursor: pointer; }
+        .tab-btn.active { background: #2a2a38; color: #fff; border-color: var(--gold); }
+
         #messages-box { flex: 1; overflow-y: auto; padding: 6px; display: flex; flex-direction: column; gap: 4px; -webkit-overflow-scrolling: touch; }
-        .msg { padding: 5px 8px; border-radius: 5px; max-width: 85%; font-size: 0.72rem; line-height: 1.3; animation: msgIn 0.2s; }
+        #faction-chat-box { flex: 1; overflow-y: auto; padding: 6px; display: none; flex-direction: column; gap: 3px; -webkit-overflow-scrolling: touch; }
+        #faction-chat-box.active { display: flex; }
+        #messages-box.active { display: flex; }
+
+        .msg { padding: 5px 8px; border-radius: 5px; max-width: 85%; font-size: 0.7rem; line-height: 1.3; animation: msgIn 0.2s; }
         @keyframes msgIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
         .msg.ai { background: #141420; border-left: 3px solid var(--gold); align-self: flex-start; }
         .msg.commander { background: #1a1420; border-left: 3px solid #a040d0; align-self: flex-start; color: #d0c0e0; }
         .msg.player { background: #141c14; border-right: 3px solid #4a7a4a; align-self: flex-end; color: #b8c8b8; }
-        .msg.system { background: #181818; color: #777; align-self: center; font-style: italic; font-size: 0.65rem; text-align: center; }
+        .msg.system { background: #181818; color: #777; align-self: center; font-style: italic; font-size: 0.6rem; text-align: center; }
         .msg.kill { background: #1a1010; border: 1px solid #4a2020; color: #d08080; align-self: center; text-align: center; }
         .msg.control { background: #101a10; border: 1px solid #2a4a2a; color: #80c080; align-self: center; text-align: center; }
+        .msg.faction { background: #1a1a20; border-left: 3px solid #6666aa; align-self: flex-start; font-size: 0.65rem; }
         .msg.old { opacity: 0.3; }
 
         #input-area { padding: 6px; border-top: 2px solid var(--border); display: flex; gap: 5px; background: #0e0e16; flex-shrink: 0; }
-        #action-input { flex: 1; padding: 7px 10px; background: #1a1a24; border: 1px solid #333; color: #fff; border-radius: 16px; font-size: 0.75rem; }
+        #action-input { flex: 1; padding: 7px 10px; background: #1a1a24; border: 1px solid #333; color: #fff; border-radius: 16px; font-size: 0.7rem; }
         #action-input:disabled { opacity: 0.4; }
+        #faction-input { flex: 1; padding: 7px 10px; background: #1a1a24; border: 1px solid #333; color: #fff; border-radius: 16px; font-size: 0.7rem; display: none; }
+        #faction-input.active { display: block; }
+        #action-input.hidden { display: none; }
         .btn-send { width: 34px; height: 34px; border-radius: 50%; background: var(--gold); color: #000; border: none; font-size: 0.9rem; cursor: pointer; flex-shrink: 0; }
         .btn-send:disabled { background: #333; color: #666; }
 
         #quick-actions { display: none; padding: 4px 6px; gap: 3px; flex-wrap: wrap; border-top: 1px solid var(--border); background: #0a0a12; flex-shrink: 0; }
         #quick-actions.active { display: flex; }
-        .quick-btn { padding: 4px 7px; background: #1a1a28; border: 1px solid #333; color: #bbb; border-radius: 10px; font-size: 0.65rem; cursor: pointer; }
+        .quick-btn { padding: 4px 7px; background: #1a1a28; border: 1px solid #333; color: #bbb; border-radius: 10px; font-size: 0.6rem; cursor: pointer; }
         .quick-btn.move-btn { border-color: #2a4a2a; color: #8c8; }
         .quick-btn.heal-btn { border-color: #2a3a4a; color: #8ac; }
-        .quick-btn.order-btn { border-color: #4a2a4a; color: #c8a; }
 
         @media (max-width: 768px) {
             #app { grid-template-columns: 1fr; grid-template-rows: 35vh 1fr; }
@@ -94,6 +105,7 @@
 </head>
 <body>
     <div id="app">
+        <!-- КАРТА -->
         <div id="map-panel">
             <svg id="map-svg" viewBox="0 0 600 500"></svg>
             <div id="map-legend">
@@ -104,9 +116,11 @@
                 <div style="margin-top:4px;font-size:0.6rem;">👥 Онлайн: <b id="players-online">0</b></div>
                 <div id="players-on-location"></div>
                 <div id="class-info"></div>
+                <button class="btn-respawn" id="btn-respawn" onclick="respawnPlayer()">🔄 Новый боец</button>
             </div>
         </div>
 
+        <!-- ЧАТ -->
         <div id="chat-panel">
             <div id="auth-screen">
                 <h2>⚔️ WARZONE RP</h2>
@@ -132,14 +146,22 @@
             <div id="player-bar">
                 <span id="unit-flag"></span>
                 <b id="disp-name">—</b>
+                <span id="disp-rank">Рядовой</span>
                 <span>📍<span id="disp-loc">—</span></span>
-                <span>❤️<span id="disp-hp">100</span></span>
+                <span>❤️<span id="disp-hp">100</span>/<span id="disp-maxhp">100</span></span>
                 <span id="disp-supplies" style="display:none;">💊<span id="disp-meds">0</span></span>
                 <div class="hp-bar-outer"><div class="hp-bar-inner" id="hp-fill" style="width:100%"></div></div>
-                <button class="quick-btn order-btn" onclick="getCommanderOrder()">📻</button>
+                <button class="quick-btn" onclick="getCommanderOrder()">📻</button>
             </div>
 
-            <div id="messages-box"></div>
+            <!-- Табы -->
+            <div id="tab-bar">
+                <button class="tab-btn active" onclick="switchTab('game')">⚔️ Бой</button>
+                <button class="tab-btn" onclick="switchTab('faction')">💬 Фракция</button>
+            </div>
+
+            <div id="messages-box" class="active"></div>
+            <div id="faction-chat-box"></div>
 
             <div id="quick-actions">
                 <button class="quick-btn" onclick="quickAction('Осматриваю позицию')">🔍</button>
@@ -154,6 +176,7 @@
 
             <div id="input-area">
                 <input type="text" id="action-input" placeholder="Опиши действие..." disabled>
+                <input type="text" id="faction-input" placeholder="Сообщение фракции...">
                 <button class="btn-send" id="btn-send" disabled onclick="sendAction()">▶</button>
             </div>
         </div>
@@ -172,9 +195,10 @@
         let player = null;
         let selectedFaction = null;
         let selectedUnit = null;
-        let gameState = { locations: {}, players: {}, locationControl: {}, captureProgress: {} };
+        let gameState = { locations: {}, players: {}, locationControl: {} };
         const MAX_VISIBLE_MSGS = 50;
         let savedPlayerId = localStorage.getItem('warzone_playerId');
+        let currentTab = 'game';
 
         const UNIT_EMOJI = {
             russia: { somali: '🦂', pyatnashka: '1️⃣5️⃣', sparta: '⚔️', wolves: '🐺' },
@@ -189,17 +213,24 @@
             commander: { name: 'Командир', buff: 'morale', desc: 'Мораль +10%' }
         };
 
+        const BUILDING_EMOJI = { base: '🏰', checkpoint: '🛂', warehouse: '📦', hospital: '🏥', barrack: '🛏️' };
+
         const LOC_COORDS = {
-            bakhmut: { x: 390, y: 255, name: 'Бахмут', neighbors: ['soledar','avdeevka','ugledar'] },
-            avdeevka: { x: 365, y: 280, name: 'Авдеевка', neighbors: ['bakhmut','donetsk','ugledar'] },
-            kherson: { x: 240, y: 335, name: 'Херсон', neighbors: ['zaporozhye'] },
-            donetsk: { x: 430, y: 305, name: 'Донецк', neighbors: ['avdeevka','lugansk','mariupol','ugledar'] },
+            donetsk: { x: 430, y: 305, name: 'Донецк', neighbors: ['avdeevka','lugansk','mariupol','ugledar','gorlovka'] },
             lugansk: { x: 490, y: 215, name: 'Луганск', neighbors: ['soledar','donetsk'] },
-            zaporozhye: { x: 285, y: 285, name: 'Запорожье', neighbors: ['kherson','ugledar'] },
-            kharkiv: { x: 435, y: 170, name: 'Харьков', neighbors: ['soledar'] },
             mariupol: { x: 445, y: 350, name: 'Мариуполь', neighbors: ['donetsk'] },
-            soledar: { x: 410, y: 235, name: 'Соледар', neighbors: ['bakhmut','kharkiv','lugansk'] },
-            ugledar: { x: 405, y: 320, name: 'Угледар', neighbors: ['bakhmut','avdeevka','donetsk','zaporozhye'] }
+            kharkiv: { x: 435, y: 170, name: 'Харьков', neighbors: ['soledar','izyum','kupiansk'] },
+            kherson: { x: 240, y: 335, name: 'Херсон', neighbors: ['zaporozhye'] },
+            bakhmut: { x: 390, y: 255, name: 'Бахмут', neighbors: ['soledar','avdeevka','ugledar','kramatorsk'] },
+            avdeevka: { x: 365, y: 280, name: 'Авдеевка', neighbors: ['bakhmut','donetsk','ugledar'] },
+            soledar: { x: 410, y: 235, name: 'Соледар', neighbors: ['bakhmut','kharkiv','lugansk','kramatorsk'] },
+            ugledar: { x: 405, y: 320, name: 'Угледар', neighbors: ['bakhmut','avdeevka','donetsk','zaporozhye','tokmak'] },
+            zaporozhye: { x: 285, y: 285, name: 'Запорожье', neighbors: ['kherson','ugledar','tokmak'] },
+            kramatorsk: { x: 380, y: 210, name: 'Краматорск', neighbors: ['bakhmut','soledar','izyum'] },
+            gorlovka: { x: 440, y: 275, name: 'Горловка', neighbors: ['donetsk','avdeevka'] },
+            izyum: { x: 400, y: 185, name: 'Изюм', neighbors: ['kharkiv','kramatorsk','kupiansk'] },
+            tokmak: { x: 350, y: 340, name: 'Токмак', neighbors: ['ugledar','zaporozhye'] },
+            kupiansk: { x: 460, y: 190, name: 'Купянск', neighbors: ['kharkiv','izyum'] }
         };
 
         function selectFaction(faction) {
@@ -220,6 +251,27 @@
             document.getElementById('char-form').style.display = 'none';
         }
 
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.tab-btn:${tab === 'game' ? 'first' : 'last'}-child`).classList.add('active');
+            
+            if (tab === 'game') {
+                document.getElementById('messages-box').classList.add('active');
+                document.getElementById('faction-chat-box').classList.remove('active');
+                document.getElementById('action-input').classList.remove('hidden');
+                document.getElementById('faction-input').classList.remove('active');
+                document.getElementById('btn-send').onclick = sendAction;
+            } else {
+                document.getElementById('messages-box').classList.remove('active');
+                document.getElementById('faction-chat-box').classList.add('active');
+                document.getElementById('action-input').classList.add('hidden');
+                document.getElementById('faction-input').classList.add('active');
+                document.getElementById('btn-send').onclick = sendFactionMessage;
+                loadFactionChat();
+            }
+        }
+
         async function joinGame() {
             const name = document.getElementById('inp-name').value.trim();
             const charClass = document.getElementById('inp-class').value;
@@ -236,11 +288,13 @@
                 localStorage.setItem('warzone_playerId', player.id);
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('player-bar').classList.add('active');
+                document.getElementById('tab-bar').classList.add('active');
                 document.getElementById('quick-actions').classList.add('active');
                 document.getElementById('action-input').disabled = false;
                 document.getElementById('btn-send').disabled = false;
                 document.getElementById('unit-flag').textContent = data.unit.emblem;
                 document.getElementById('disp-name').textContent = player.name;
+                document.getElementById('btn-respawn').style.display = 'none';
                 if (player.class === 'medic') {
                     document.getElementById('btn-heal').style.display = 'inline-block';
                     document.getElementById('disp-supplies').style.display = 'inline';
@@ -251,7 +305,29 @@
             } catch (e) { addMessage('system', '❌ Ошибка'); document.getElementById('btn-join').disabled = false; }
         }
 
+        async function respawnPlayer() {
+            if (!player) return;
+            const name = prompt('Позывной для нового бойца:', player.name);
+            if (!name) return;
+            try {
+                const resp = await fetch('/api/respawn', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ playerId: player.id, name, faction: player.faction, unitId: player.unit, charClass: player.class, look: player.look })
+                });
+                const data = await resp.json();
+                player = data.player;
+                localStorage.setItem('warzone_playerId', player.id);
+                document.getElementById('btn-respawn').style.display = 'none';
+                document.getElementById('action-input').disabled = false;
+                document.getElementById('btn-send').disabled = false;
+                document.getElementById('disp-name').textContent = player.name;
+                addMessage('system', data.message);
+                updatePlayerUI(); updateMap(); updatePlayersOnLocation();
+            } catch (e) { addMessage('system', '❌ Ошибка возрождения'); }
+        }
+
         async function sendAction() {
+            if (currentTab !== 'game') return;
             const input = document.getElementById('action-input');
             const action = input.value.trim();
             if (!action || !player) return;
@@ -267,17 +343,57 @@
                 if (data.gameUpdate?.systemMessage) {
                     const m = data.gameUpdate.systemMessage;
                     if (m.includes('💀')) addMessage('kill', m);
-                    else if (m.includes('захват') || m.includes('контроль') || m.includes('🏴')) addMessage('control', m);
+                    else if (m.includes('захват') || m.includes('🏴')) addMessage('control', m);
                     else addMessage('system', m);
                 }
                 if (data.gameUpdate?.playerChanges) {
                     Object.assign(player, data.gameUpdate.playerChanges);
                     if (player.supplies !== undefined) document.getElementById('disp-meds').textContent = player.supplies;
+                    if (player.alive === false) handleDeath();
                 }
                 updatePlayerUI(); updateMap(); updatePlayersOnLocation();
-                if (player.hp <= 0) { addMessage('kill', `💀 ${player.name} погиб`); setInputEnabled(false); localStorage.removeItem('warzone_playerId'); }
             } catch (e) { addMessage('system', '⚡ Связь потеряна'); }
             setInputEnabled(true);
+        }
+
+        async function sendFactionMessage() {
+            if (currentTab !== 'faction') return;
+            const input = document.getElementById('faction-input');
+            const message = input.value.trim();
+            if (!message || !player) return;
+            input.value = '';
+            try {
+                await fetch('/api/faction-chat', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ playerId: player.id, message })
+                });
+                loadFactionChat();
+            } catch (e) {}
+        }
+
+        async function loadFactionChat() {
+            if (!player) return;
+            try {
+                const resp = await fetch(`/api/faction-chat/${player.faction}`);
+                const data = await resp.json();
+                const box = document.getElementById('faction-chat-box');
+                box.innerHTML = '';
+                (data.chat || []).forEach(msg => {
+                    const div = document.createElement('div');
+                    div.className = 'msg faction';
+                    div.textContent = `${msg.unit} ${msg.playerName}: ${msg.message}`;
+                    box.appendChild(div);
+                });
+                box.scrollTop = box.scrollHeight;
+            } catch (e) {}
+        }
+
+        function handleDeath() {
+            document.getElementById('btn-respawn').style.display = 'block';
+            document.getElementById('action-input').disabled = true;
+            document.getElementById('btn-send').disabled = true;
+            document.getElementById('quick-actions').classList.remove('active');
+            localStorage.removeItem('warzone_playerId');
         }
 
         function quickAction(a) { document.getElementById('action-input').value = a; sendAction(); }
@@ -292,12 +408,14 @@
                 const loc = gameState.locationControl?.[locId];
                 if (!loc) return;
                 const locName = LOC_COORDS[locId]?.name || locId;
-                let canMove = false;
-                if (player.faction === 'russia' && (loc.control === 'russia' || loc.control === 'contested' || loc.russia >= 30)) canMove = true;
-                if (player.faction === 'ukraine' && (loc.control === 'ukraine' || loc.control === 'contested' || loc.ukraine >= 30)) canMove = true;
+                const myPower = player.faction === 'russia' ? loc.russia : loc.ukraine;
+                const enemyPower = player.faction === 'russia' ? loc.ukraine : loc.russia;
+                let canMove = enemyPower <= 70;
+                let riskColor = canMove ? (myPower >= 65 ? '#8c8' : '#cc8') : '#c44';
+                let riskText = !canMove ? '🚫 Враг >70%' : (myPower >= 65 ? '✅ Безопасно' : '⚠️ Опасно');
                 const btn = document.createElement('button');
-                btn.style.cssText = `width:100%;padding:10px;margin:4px 0;background:${canMove?'#1a3a1a':'#2a1a1a'};border:1px solid ${canMove?'#3a5a3a':'#4a2a2a'};color:${canMove?'#cfc':'#c88'};border-radius:5px;cursor:${canMove?'pointer':'not-allowed'};text-align:left;`;
-                btn.innerHTML = `📍 <b>${locName}</b><br><small>РФ:${loc.russia}% / ВСУ:${loc.ukraine}% [${loc.control}]</small>`;
+                btn.style.cssText = `width:100%;padding:10px;margin:4px 0;background:#1a1a24;border:2px solid ${riskColor};color:${canMove?'#fff':'#888'};border-radius:5px;cursor:${canMove?'pointer':'not-allowed'};text-align:left;`;
+                btn.innerHTML = `📍 <b>${locName}</b><br><small>РФ:${loc.russia}% / ВСУ:${loc.ukraine}%</small><br><small style="color:${riskColor};">${riskText}</small>`;
                 btn.disabled = !canMove;
                 if (canMove) btn.onclick = () => moveToLocation(locId, locName);
                 container.appendChild(btn);
@@ -312,10 +430,13 @@
                 const data = await resp.json();
                 if (data.success) {
                     player.location = locId;
-                    addMessage('system', `🚶 ${player.name} переместился в ${locName}`);
+                    addMessage('system', `🚶 ${data.message}`);
                     updatePlayerUI(); updateMap(); updatePlayersOnLocation();
                     document.getElementById('move-modal').style.display = 'none';
-                } else { addMessage('system', '❌ ' + (data.error || 'Ошибка')); }
+                } else {
+                    addMessage('system', '❌ ' + (data.error || 'Ошибка'));
+                    if (data.error && data.error.includes('💀')) handleDeath();
+                }
             } catch (e) { addMessage('system', '❌ Ошибка'); }
         }
 
@@ -332,10 +453,15 @@
             if (!player) return;
             const locPlayers = Object.values(gameState.players).filter(p => p.alive && p.location === player.location);
             const container = document.getElementById('players-on-location');
-            if (locPlayers.length === 0) { container.innerHTML = '<span style="color:#555;">Никого рядом</span>'; }
+            const loc = gameState.locations[player.location];
+            let buildingsText = '';
+            if (loc?.buildings?.length > 0) {
+                buildingsText = '<br>🏗 ' + loc.buildings.map(b => BUILDING_EMOJI[b] || b).join(' ');
+            }
+            if (locPlayers.length === 0) { container.innerHTML = '<span style="color:#555;">Никого рядом</span>' + buildingsText; }
             else {
-                container.innerHTML = `<b style="color:#aaa;">📍 ${LOC_COORDS[player.location]?.name}:</b><br>` +
-                    locPlayers.map(p => `${p.faction==='russia'?'🔴':'🔵'} ${p.name} [${p.class}] ${p.hp}HP`).join('<br>');
+                container.innerHTML = `<b style="color:#aaa;">📍 ${LOC_COORDS[player.location]?.name}:</b>${buildingsText}<br>` +
+                    locPlayers.map(p => `${p.faction==='russia'?'🔴':'🔵'} ${p.name} [${p.rank}] ${p.hp}/${p.maxHp}HP`).join('<br>');
             }
         }
 
@@ -343,12 +469,16 @@
             if (!player) return;
             document.getElementById('disp-name').textContent = player.name;
             document.getElementById('disp-hp').textContent = player.hp;
+            document.getElementById('disp-maxhp').textContent = player.maxHp || 100;
+            document.getElementById('disp-rank').textContent = player.rank || 'Рядовой';
             document.getElementById('disp-loc').textContent = LOC_COORDS[player.location]?.name || '—';
             if (player.supplies !== undefined) document.getElementById('disp-meds').textContent = player.supplies;
             const hpFill = document.getElementById('hp-fill');
-            hpFill.style.width = player.hp + '%'; hpFill.className = 'hp-bar-inner';
-            if (player.hp <= 20) hpFill.classList.add('critical');
-            else if (player.hp <= 40) hpFill.classList.add('low');
+            const hpPercent = ((player.hp || 0) / (player.maxHp || 100)) * 100;
+            hpFill.style.width = hpPercent + '%';
+            hpFill.className = 'hp-bar-inner';
+            if (hpPercent <= 20) hpFill.classList.add('critical');
+            else if (hpPercent <= 40) hpFill.classList.add('low');
         }
 
         function updateMap() {
@@ -356,6 +486,7 @@
             let html = '';
             for (let i = 0; i < 600; i += 40) html += `<line x1="${i}" y1="0" x2="${i}" y2="500" class="map-bg-element"/>`;
             for (let i = 0; i < 500; i += 40) html += `<line x1="0" y1="${i}" x2="600" y2="${i}" class="map-bg-element"/>`;
+            
             Object.entries(LOC_COORDS).forEach(([id, loc]) => {
                 loc.neighbors.forEach(nid => {
                     const n = LOC_COORDS[nid];
@@ -367,13 +498,23 @@
                 else if (c.control === 'ukraine' || c.ukraine >= 65) cls = 'ukraine';
                 const isCurrent = player && player.location === id;
                 html += `<circle class="loc-point ${cls}${isCurrent?' current':''}" cx="${loc.x}" cy="${loc.y}" r="15" data-loc="${id}" onclick="clickOnMap('${id}')"/>`;
-                html += `<text x="${loc.x}" y="${loc.y+3}" class="loc-label">${loc.name.split(' ')[0]}</text>`;
+                html += `<text x="${loc.x}" y="${loc.y+4}" class="loc-label">${loc.name.split(' ')[0]}</text>`;
+                
+                // Здания
+                const locData = gameState.locations?.[id];
+                if (locData?.buildings?.length > 0) {
+                    const buildingText = locData.buildings.map(b => BUILDING_EMOJI[b] || '').join('');
+                    html += `<text x="${loc.x}" y="${loc.y-14}" class="building-icon" text-anchor="middle">${buildingText}</text>`;
+                }
             });
+            
             Object.values(gameState.players).filter(p => p.alive).forEach(p => {
                 const loc = LOC_COORDS[p.location]; if (!loc) return;
-                html += `<circle cx="${loc.x+Math.sin(p.id.length*2.7)*12}" cy="${loc.y+Math.cos(p.id.length*2.7)*10}" r="4" fill="${p.faction==='russia'?'#ff4444':'#4488ff'}" stroke="white" stroke-width="1" class="player-dot"><title>${p.name} [${p.class}]</title></circle>`;
+                html += `<circle cx="${loc.x+Math.sin(p.id.length*2.7)*12}" cy="${loc.y+Math.cos(p.id.length*2.7)*10}" r="4" fill="${p.faction==='russia'?'#ff4444':'#4488ff'}" stroke="white" stroke-width="1" class="player-dot"><title>${p.name} [${p.rank}]</title></circle>`;
             });
+            
             svg.innerHTML = html;
+            
             let rus=0,ukr=0,cont=0;
             Object.values(gameState.locationControl||{}).forEach(c=>{if(c.russia>=65)rus++;else if(c.ukraine>=65)ukr++;else cont++;});
             document.getElementById('rus-total').textContent=rus;
@@ -384,8 +525,11 @@
 
         function clickOnMap(locId) {
             const loc = gameState.locationControl?.[locId];
+            const locData = gameState.locations?.[locId];
             const name = LOC_COORDS[locId]?.name || locId;
-            if (loc) addMessage('system', `📍 ${name}: РФ ${loc.russia}% / ВСУ ${loc.ukraine}% [${loc.control}]`);
+            let info = `📍 ${name}: РФ ${loc?.russia||0}% / ВСУ ${loc?.ukraine||0}% [${loc?.control||'?'}]`;
+            if (locData?.buildings?.length > 0) info += ` | 🏗 ${locData.buildings.join(', ')}`;
+            addMessage('system', info);
         }
 
         function addMessage(type, text) {
@@ -406,6 +550,12 @@
         }
 
         document.getElementById('action-input').addEventListener('keypress', e => { if (e.key==='Enter') sendAction(); });
+        document.getElementById('faction-input').addEventListener('keypress', e => { if (e.key==='Enter') sendFactionMessage(); });
+
+        // Переключение табов
+        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+            btn.addEventListener('click', () => switchTab(i === 0 ? 'game' : 'faction'));
+        });
 
         async function pollState() {
             try {
@@ -415,35 +565,36 @@
                 updateMap();
                 updatePlayersOnLocation();
 
-                // Восстановление сохранённого игрока
                 if (!player && savedPlayerId && data.players[savedPlayerId] && data.players[savedPlayerId].alive) {
                     player = data.players[savedPlayerId];
                     document.getElementById('auth-screen').classList.add('hidden');
                     document.getElementById('player-bar').classList.add('active');
+                    document.getElementById('tab-bar').classList.add('active');
                     document.getElementById('quick-actions').classList.add('active');
                     document.getElementById('action-input').disabled = false;
                     document.getElementById('btn-send').disabled = false;
                     document.getElementById('unit-flag').textContent = UNIT_EMOJI[player.faction]?.[player.unit] || '';
                     document.getElementById('disp-name').textContent = player.name;
+                    document.getElementById('btn-respawn').style.display = 'none';
                     if (player.class === 'medic') {
                         document.getElementById('btn-heal').style.display = 'inline-block';
                         document.getElementById('disp-supplies').style.display = 'inline';
                     }
                     document.getElementById('class-info').textContent = `🎖 ${CLASS_BUFFS[player.class].name}: ${CLASS_BUFFS[player.class].desc}`;
-                    updatePlayerUI();
-                    updateMap();
-                    updatePlayersOnLocation();
+                    updatePlayerUI(); updateMap(); updatePlayersOnLocation();
                     addMessage('system', `👋 С возвращением, ${player.name}!`);
                 }
 
                 if (player && data.players[player.id]) {
                     const sp = data.players[player.id];
-                    if (sp.hp !== player.hp || sp.supplies !== player.supplies) {
-                        player.hp = sp.hp; player.supplies = sp.supplies; updatePlayerUI();
+                    if (sp.hp !== player.hp || sp.maxHp !== player.maxHp || sp.rank !== player.rank || sp.supplies !== player.supplies) {
+                        Object.assign(player, sp);
+                        updatePlayerUI();
                     }
                     if (!sp.alive && player.alive) {
-                                                player.alive = false; addMessage('kill', '💀 Ты погиб'); 
-                        setInputEnabled(false); localStorage.removeItem('warzone_playerId');
+                        player.alive = false;
+                        addMessage('kill', '💀 Ты погиб!');
+                        handleDeath();
                     }
                 }
             } catch (e) {}
@@ -454,7 +605,7 @@
             if (e.target === this) this.style.display = 'none';
         });
 
-        addMessage('system', '⚔️ WarZone RP готова. Выбери сторону!');
+        addMessage('system', '⚔️ WarZone RP 3.0 готов. Выбери сторону!');
         pollState();
     </script>
 </body>
