@@ -12,23 +12,15 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; height: 100vh; height: 100dvh; overflow: hidden; touch-action: manipulation; }
 
-        /* Бегущая строка */
         #news-ticker {
             position: fixed; top: 0; left: 0; right: 0; z-index: 3000;
             background: rgba(0,0,0,0.9); border-bottom: 1px solid var(--border);
-            padding: 4px 0; overflow: hidden; white-space: nowrap;
-            font-size: 0.7rem; color: #ddd; height: 22px;
+            padding: 4px 0; overflow: hidden; white-space: nowrap; font-size: 0.7rem; color: #ddd; height: 22px;
         }
-        #news-ticker span {
-            display: inline-block; padding-left: 100%;
-            animation: ticker 60s linear infinite;
-        }
-        @keyframes ticker {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-        }
+        #news-ticker span { display: inline-block; padding-left: 100%; animation: ticker 60s linear infinite; }
+        @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
 
-        #app { display: grid; grid-template-columns: 1fr 1.2fr; height: calc(100vh - 22px); height: calc(100dvh - 22px); margin-top: 22px; }
+        #app { display: grid; grid-template-columns: 1fr 1.2fr; height: calc(100vh - 22px); margin-top: 22px; }
 
         #map-panel { position: relative; overflow: hidden; border-right: 2px solid var(--border); background: #0d1a0d; }
         #map-svg { width: 100%; height: 100%; transition: transform 0.1s; transform-origin: center; }
@@ -38,8 +30,7 @@
         .loc-point.ukraine { fill: rgba(30,70,200,0.85); stroke: #6688ff; stroke-width: 2; }
         .loc-point.contested { fill: rgba(255,130,0,0.8); stroke: #ffaa44; stroke-width: 2; animation: pulse 2s infinite; }
         .loc-point.current { stroke: #fff !important; stroke-width: 4 !important; stroke-dasharray: 4 2; animation: dashMove 1s linear infinite; }
-        @keyframes pulse { 0%,100%{r:15} 50%{r:20} }
-        @keyframes dashMove { to{stroke-dashoffset:-12} }
+        @keyframes pulse { 0%,100%{r:15} 50%{r:20} } @keyframes dashMove { to{stroke-dashoffset:-12} }
         .loc-label { fill: #fff; font-size: 8px; font-weight: bold; text-anchor: middle; pointer-events: none; paint-order: stroke; stroke: #000; stroke-width: 3px; }
         .building-icon { font-size: 10px; pointer-events: none; }
         .player-dot { transition: all 0.5s; pointer-events: none; }
@@ -50,24 +41,6 @@
         .legend-dot.russia { background: var(--rus-red); } .legend-dot.ukraine { background: var(--ukr-blue); } .legend-dot.contested { background: var(--orange); }
         #players-on-location { margin-top: 4px; font-size: 0.6rem; color: #aaa; max-height: 50px; overflow-y: auto; }
         #class-info { margin-top: 3px; font-size: 0.55rem; color: var(--gold); }
-
-        /* Всплывающее событие */
-        #event-popup {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 2500; display: none; text-align: center;
-            background: rgba(0,0,0,0.95); border: 2px solid var(--gold);
-            border-radius: 16px; padding: 20px; max-width: 400px; width: 90%;
-            box-shadow: 0 0 60px rgba(200,168,64,0.5);
-            animation: popIn 0.5s ease;
-        }
-        @keyframes popIn {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-        #event-image { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
-        #event-title { color: var(--gold); font-size: 1.1rem; font-weight: bold; margin-bottom: 6px; }
-        #event-text { color: #ccc; font-size: 0.8rem; margin-bottom: 14px; }
-        #event-close { padding: 8px 24px; background: var(--gold); color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
         #chat-panel { display: flex; flex-direction: column; background: var(--panel); height: 100%; overflow: hidden; }
         #auth-screen { padding: 10px; border-bottom: 2px solid var(--border); background: #101018; overflow-y: auto; flex-shrink: 0; }
@@ -99,10 +72,12 @@
         .tab-btn { padding: 3px 7px; background: #1a1a28; border: 1px solid #333; color: #888; border-radius: 7px; font-size: 0.6rem; cursor: pointer; }
         .tab-btn.active { background: #2a2a38; color: #fff; border-color: var(--gold); }
 
-        #messages-box { flex: 1; overflow-y: auto; padding: 5px; display: flex; flex-direction: column; gap: 3px; -webkit-overflow-scrolling: touch; }
-        #faction-chat-box { flex: 1; overflow-y: auto; padding: 5px; display: none; flex-direction: column; gap: 2px; -webkit-overflow-scrolling: touch; }
+        /* ФИКС ЧАТА */
+        #chat-container { flex: 1; position: relative; overflow: hidden; }
+        #messages-box { position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow-y: auto; padding: 5px; display: flex; flex-direction: column; gap: 3px; -webkit-overflow-scrolling: touch; }
+        #faction-chat-box { position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow-y: auto; padding: 5px; display: none; flex-direction: column; gap: 2px; -webkit-overflow-scrolling: touch; }
         #faction-chat-box.active { display: flex; }
-        #messages-box.active { display: flex; }
+        #messages-box.hidden { display: none; }
 
         .msg { padding: 4px 7px; border-radius: 4px; max-width: 85%; font-size: 0.65rem; line-height: 1.25; animation: msgIn 0.2s; }
         @keyframes msgIn { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:translateY(0)} }
@@ -132,20 +107,51 @@
 
         #music-btn { position: fixed; bottom: 65px; right: 10px; z-index: 500; width: 34px; height: 34px; border-radius: 50%; background: rgba(0,0,0,0.85); border: 1px solid var(--border); color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
+        /* Всплывающее событие */
+        #event-popup {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 2500; display: none; text-align: center;
+            background: rgba(0,0,0,0.95); border: 2px solid var(--gold);
+            border-radius: 16px; padding: 24px; max-width: 380px; width: 90%;
+            box-shadow: 0 0 60px rgba(200,168,64,0.5); animation: popIn 0.5s ease;
+        }
+        @keyframes popIn { 0%{transform:translate(-50%,-50%) scale(0.5);opacity:0} 100%{transform:translate(-50%,-50%) scale(1);opacity:1} }
+        #event-emoji { font-size: 3.5rem; margin-bottom: 8px; }
+        #event-title { color: var(--gold); font-size: 1.1rem; font-weight: bold; margin-bottom: 6px; }
+        #event-text { color: #ccc; font-size: 0.8rem; margin-bottom: 14px; }
+        #event-close { padding: 8px 24px; background: var(--gold); color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+        /* Инвентарь */
+        #inventory-modal {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 2100; background: #12121c; border: 2px solid var(--gold); border-radius: 12px;
+            padding: 16px; max-width: 450px; width: 95%; box-shadow: 0 0 40px rgba(0,0,0,0.9);
+        }
+        #inventory-modal h3 { color: var(--gold); text-align: center; margin-bottom: 10px; font-size: 0.9rem; }
+        .inv-layout { display: flex; gap: 10px; }
+        .inv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; flex: 1; }
+        .inv-slot { aspect-ratio: 1; background: #1a1a28; border: 1px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; position: relative; transition: all 0.2s; }
+        .inv-slot:hover { border-color: var(--gold); background: #222238; }
+        .inv-slot .item-count { position: absolute; bottom: 2px; right: 4px; font-size: 0.55rem; color: #fff; }
+        .inv-equipment { display: flex; flex-direction: column; gap: 4px; width: 60px; }
+        .inv-equip-slot { aspect-ratio: 1; background: #1a1a28; border: 2px solid #2a2a3a; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; transition: all 0.2s; }
+        .inv-equip-slot:hover { border-color: var(--gold); }
+        .inv-equip-slot.equipped { border-color: #4a4 !important; box-shadow: 0 0 8px rgba(100,200,100,0.4); }
+        .inv-mannequin { text-align: center; font-size: 0.5rem; color: #888; line-height: 1; }
+        .inv-mannequin span { font-size: 1.8rem; display: block; }
+
         @media (max-width: 768px) {
             #app { grid-template-columns: 1fr; grid-template-rows: 35vh 1fr; }
             #map-panel { border-right: none; border-bottom: 2px solid var(--border); }
-            #event-image { height: 120px; }
+            #inventory-modal { max-width: 95%; padding: 10px; }
         }
     </style>
 </head>
 <body>
-    <!-- Бегущая строка -->
-    <div id="news-ticker"><span id="news-text">⚔️ Загрузка сводок с фронта...</span></div>
+    <div id="news-ticker"><span id="news-text">⚔️ Загрузка сводок...</span></div>
 
-    <!-- Всплывающее событие -->
     <div id="event-popup">
-        <img id="event-image" src="" alt="Событие">
+        <div id="event-emoji">🏴</div>
         <div id="event-title"></div>
         <div id="event-text"></div>
         <button id="event-close" onclick="closeEvent()">Понятно</button>
@@ -177,10 +183,8 @@
                 <div id="char-form" style="display:none;">
                     <input type="text" id="inp-name" placeholder="Позывной" maxlength="20">
                     <select id="inp-class">
-                        <option value="rifleman">🔫 Стрелок</option>
-                        <option value="sniper">🎯 Снайпер</option>
-                        <option value="medic">💉 Медик</option>
-                        <option value="engineer">🔧 Инженер</option>
+                        <option value="rifleman">🔫 Стрелок</option><option value="sniper">🎯 Снайпер</option>
+                        <option value="medic">💉 Медик</option><option value="engineer">🔧 Инженер</option>
                         <option value="commander">⭐ Командир</option>
                     </select>
                     <input type="text" id="inp-look" placeholder="Внешность" maxlength="50">
@@ -204,8 +208,10 @@
                 <button class="tab-btn" onclick="switchTab('faction')">💬 Фракция</button>
             </div>
 
-            <div id="messages-box" class="active"></div>
-            <div id="faction-chat-box"></div>
+            <div id="chat-container">
+                <div id="messages-box"></div>
+                <div id="faction-chat-box"></div>
+            </div>
 
             <div id="quick-actions">
                 <button class="quick-btn" onclick="quickAction('Осматриваю позицию')">🔍</button>
@@ -226,6 +232,7 @@
         </div>
     </div>
 
+    <!-- Модалка профиля -->
     <div id="profile-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;">
         <div style="background:#1a1a24;border:1px solid #333;border-radius:12px;padding:20px;max-width:320px;width:90%;text-align:center;">
             <div id="profile-avatar" style="width:70px;height:70px;border-radius:50%;background:#222;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:35px;cursor:pointer;overflow:hidden;border:2px solid var(--gold);">
@@ -241,8 +248,30 @@
             <p id="profile-hp" style="color:#4a4;margin-bottom:2px;font-size:0.75rem;">—</p>
             <p id="profile-kills" style="color:#c44;margin-bottom:2px;font-size:0.75rem;">—</p>
             <p id="profile-deaths" style="color:#888;margin-bottom:8px;font-size:0.75rem;">—</p>
-            <button onclick="document.getElementById('profile-modal').style.display='none'" style="padding:7px 20px;background:var(--gold);color:#000;border:none;border-radius:5px;cursor:pointer;font-weight:bold;">Закрыть</button>
+            <button onclick="showInventory()" style="padding:7px 14px;background:#2a3a4a;color:#8ac;border:1px solid #4a6a8a;border-radius:5px;cursor:pointer;font-size:0.75rem;margin-right:6px;">🎒 Инвентарь</button>
+            <button onclick="document.getElementById('profile-modal').style.display='none'" style="padding:7px 14px;background:var(--gold);color:#000;border:none;border-radius:5px;cursor:pointer;font-weight:bold;font-size:0.75rem;">Закрыть</button>
         </div>
+    </div>
+
+    <!-- Модалка инвентаря -->
+    <div id="inventory-modal">
+        <h3>🎒 Инвентарь</h3>
+        <div class="inv-layout">
+            <div class="inv-grid" id="inv-grid"></div>
+            <div class="inv-equipment">
+                <div class="inv-equip-slot" id="equip-helmet" title="Шлем" onclick="unequipItem('helmet')">🪖</div>
+                <div class="inv-equip-slot" id="equip-weapon" title="Оружие" onclick="unequipItem('weapon')">🔫</div>
+                <div class="inv-equip-slot" id="equip-armor" title="Бронежилет" onclick="unequipItem('armor')">🛡️</div>
+                <div class="inv-equip-slot" id="equip-boots" title="Ботинки" onclick="unequipItem('boots')">👢</div>
+            </div>
+            <div class="inv-mannequin">
+                <span>🪖</span>шлем
+                <span>🔫</span>оружие
+                <span>🛡️</span>броня
+                <span>👢</span>обувь
+            </div>
+        </div>
+        <button onclick="document.getElementById('inventory-modal').style.display='none'" style="margin-top:10px;padding:7px 20px;background:var(--gold);color:#000;border:none;border-radius:5px;cursor:pointer;width:100%;font-weight:bold;">Закрыть</button>
     </div>
 
     <div id="move-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center;">
@@ -264,7 +293,7 @@
         const MAX_VISIBLE_MSGS = 50;
         let savedPlayerId = localStorage.getItem('warzone_playerId');
         let currentTab = 'game', musicPlaying = false;
-        let prevControl = {}; // Для отслеживания захватов
+        let prevControl = {};
 
         const UNIT_EMOJI = {
             russia: { somali: '🦂', pyatnashka: '1️⃣5️⃣', sparta: '⚔️', wolves: '🐺' },
@@ -297,19 +326,87 @@
             kupiansk: { x: 460, y: 190, name: 'Купянск', neighbors: ['kharkiv','izyum'] }
         };
 
-        // Картинки для событий
-        const EVENT_IMAGES = [
-            'https://images.unsplash.com/photo-1518531933037-91b2bf5d289d?w=600', // руины
-            'https://images.unsplash.com/photo-1580130775561-36e1e7b63aba?w=600', // окопы
-            'https://images.unsplash.com/photo-1547496575-6429d2aae7d5?w=600', // военная техника
-            'https://images.unsplash.com/photo-1508807701374-411a0e2c7f27?w=600', // город после боя
-            'https://images.unsplash.com/photo-1517352159731-8ec3b2b3f67b?w=600', // солдаты в поле
-            'https://images.unsplash.com/photo-1579952290112-7b59ba1f3d0e?w=600', // военный бинокль
-            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600', // техника
-            'https://images.unsplash.com/photo-1579520011962-937d43a4d6a8?w=600', // поле боя
-            'https://images.unsplash.com/photo-1489944440096-cb7d0f4f2d4d?w=600', // военный грузовик
-            'https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?w=600'  // туман войны
-        ];
+        // Инвентарь игрока (локально)
+        let playerInventory = { items: [], equipment: { helmet: null, weapon: null, armor: null, boots: null } };
+
+        function initInventory() {
+            const saved = localStorage.getItem('warzone_inv_' + (player?.id || ''));
+            if (saved) playerInventory = JSON.parse(saved);
+            else playerInventory = { items: Array(16).fill(null), equipment: { helmet: null, weapon: null, armor: null, boots: null } };
+        }
+
+        function saveInventory() {
+            if (player) localStorage.setItem('warzone_inv_' + player.id, JSON.stringify(playerInventory));
+        }
+
+        function renderInventory() {
+            const grid = document.getElementById('inv-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 16; i++) {
+                const item = playerInventory.items[i];
+                const slot = document.createElement('div');
+                slot.className = 'inv-slot';
+                slot.innerHTML = item ? item.emoji + '<span class="item-count">' + (item.count||1) + '</span>' : '';
+                slot.onclick = () => useInventoryItem(i);
+                grid.appendChild(slot);
+            }
+            // Экипировка
+            ['helmet','weapon','armor','boots'].forEach(slot => {
+                const el = document.getElementById('equip-' + slot);
+                const item = playerInventory.equipment[slot];
+                if (item) { el.textContent = item.emoji; el.classList.add('equipped'); }
+                else { el.textContent = slot === 'helmet' ? '🪖' : slot === 'weapon' ? '🔫' : slot === 'armor' ? '🛡️' : '👢'; el.classList.remove('equipped'); }
+            });
+        }
+
+        function useInventoryItem(index) {
+            const item = playerInventory.items[index];
+            if (!item) return;
+            // Экипировать в соответствующий слот
+            if (item.slot) {
+                const old = playerInventory.equipment[item.slot];
+                playerInventory.equipment[item.slot] = item;
+                playerInventory.items[index] = old;
+            }
+            saveInventory();
+            renderInventory();
+            addMessage('system', '🎒 ' + (item.name || 'Предмет') + ' экипирован!');
+        }
+
+        function unequipItem(slot) {
+            const item = playerInventory.equipment[slot];
+            if (!item) return;
+            // Найти свободное место
+            const freeSlot = playerInventory.items.findIndex(i => i === null);
+            if (freeSlot >= 0) {
+                playerInventory.items[freeSlot] = item;
+                playerInventory.equipment[slot] = null;
+                saveInventory();
+                renderInventory();
+                addMessage('system', '🎒 Предмет снят.');
+            }
+        }
+
+        function addItemToInventory(emoji, name, slot, count = 1) {
+            initInventory();
+            const existing = playerInventory.items.findIndex(i => i && i.name === name && !i.slot);
+            if (existing >= 0 && count === 1) {
+                playerInventory.items[existing].count = (playerInventory.items[existing].count || 1) + 1;
+            } else {
+                const freeSlot = playerInventory.items.findIndex(i => i === null);
+                if (freeSlot >= 0) {
+                    playerInventory.items[freeSlot] = { emoji, name, slot, count };
+                }
+            }
+            saveInventory();
+        }
+
+        function showInventory() {
+            document.getElementById('profile-modal').style.display = 'none';
+            initInventory();
+            renderInventory();
+            document.getElementById('inventory-modal').style.display = 'block';
+        }
 
         function selectFaction(faction) {
             selectedFaction = faction; selectedUnit = null;
@@ -332,7 +429,7 @@
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i === (tab === 'game' ? 0 : 1)));
-            document.getElementById('messages-box').classList.toggle('active', tab === 'game');
+            document.getElementById('messages-box').classList.toggle('hidden', tab !== 'game');
             document.getElementById('faction-chat-box').classList.toggle('active', tab === 'faction');
             document.getElementById('action-input').classList.toggle('hidden', tab !== 'game');
             document.getElementById('faction-input').classList.toggle('active', tab === 'faction');
@@ -347,13 +444,11 @@
             if (!name || !selectedFaction || !selectedUnit) return;
             document.getElementById('btn-join').disabled = true;
             try {
-                const resp = await fetch('/api/join', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, faction: selectedFaction, unitId: selectedUnit, charClass, look })
-                });
+                const resp = await fetch('/api/join', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, faction: selectedFaction, unitId: selectedUnit, charClass, look }) });
                 const data = await resp.json();
                 player = data.player;
                 localStorage.setItem('warzone_playerId', player.id);
+                initInventory();
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('player-bar').classList.add('active');
                 document.getElementById('tab-bar').classList.add('active');
@@ -363,11 +458,8 @@
                 document.getElementById('unit-flag').textContent = data.unit.emblem;
                 document.getElementById('disp-name').textContent = player.name;
                 document.getElementById('btn-respawn').style.display = 'none';
-                if (player.class === 'medic') {
-                    document.getElementById('btn-heal').style.display = 'inline-block';
-                    document.getElementById('disp-supplies').style.display = 'inline';
-                }
-                document.getElementById('class-info').textContent = '🎖 ' + CLASS_BUFFS[player.class].name + ': ' + CLASS_BUFFS[player.class].desc;
+                if (player.class === 'medic') { document.getElementById('btn-heal').style.display='inline-block'; document.getElementById('disp-supplies').style.display='inline'; }
+                document.getElementById('class-info').textContent = '🎖 ' + CLASS_BUFFS[player.class].name;
                 addMessage('commander', '📻 ' + data.unit.commanderName + ': ' + data.greeting);
                 updatePlayerUI(); updateMap(); updatePlayersOnLocation();
             } catch (e) { addMessage('system', '❌ Ошибка'); document.getElementById('btn-join').disabled = false; }
@@ -378,13 +470,12 @@
             const name = prompt('Позывной:', player.name);
             if (!name) return;
             try {
-                const resp = await fetch('/api/respawn', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ playerId: player.id, name, faction: player.faction, unitId: player.unit, charClass: player.class, look: player.look })
-                });
+                const resp = await fetch('/api/respawn', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId: player.id, name, faction: player.faction, unitId: player.unit, charClass: player.class, look: player.look }) });
                 const data = await resp.json();
                 player = data.player;
                 localStorage.setItem('warzone_playerId', player.id);
+                playerInventory = { items: Array(16).fill(null), equipment: { helmet: null, weapon: null, armor: null, boots: null } };
+                saveInventory();
                 document.getElementById('btn-respawn').style.display = 'none';
                 document.getElementById('action-input').disabled = false;
                 document.getElementById('btn-send').disabled = false;
@@ -403,10 +494,7 @@
             addMessage('player', player.name + ': ' + action);
             input.value = ''; setInputEnabled(false);
             try {
-                const resp = await fetch('/api/action', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ playerId: player.id, action })
-                });
+                const resp = await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId: player.id, action }) });
                 const data = await resp.json();
                 if (data.narrative) addMessage('ai', data.narrative);
                 if (data.gameUpdate?.systemMessage) {
@@ -416,13 +504,32 @@
                     else addMessage('system', m);
                 }
                 if (data.gameUpdate?.playerChanges) {
+                    const oldRank = player.rank;
                     Object.assign(player, data.gameUpdate.playerChanges);
                     if (player.supplies !== undefined) document.getElementById('disp-meds').textContent = player.supplies;
                     if (player.alive === false) handleDeath();
+                    // Шанс получить ящик при повышении ранга
+                    if (player.rank !== oldRank && player.rank !== 'Рядовой') {
+                        const loot = getRandomLoot();
+                        addItemToInventory(loot.emoji, loot.name, loot.slot);
+                        addMessage('system', '📦 Повышение! Получен предмет: ' + loot.name);
+                    }
                 }
                 updatePlayerUI(); updateMap(); updatePlayersOnLocation();
             } catch (e) { addMessage('system', '⚡ Связь потеряна'); }
             setInputEnabled(true);
+        }
+
+        function getRandomLoot() {
+            const loots = [
+                { emoji: '⛑️', name: 'Каска', slot: 'helmet' },
+                { emoji: '🎖️', name: 'Бронежилет', slot: 'armor' },
+                { emoji: '🔫', name: 'Автомат АК', slot: 'weapon' },
+                { emoji: '👢', name: 'Берцы', slot: 'boots' },
+                { emoji: '💣', name: 'Граната', slot: null },
+                { emoji: '🩹', name: 'Аптечка', slot: null },
+            ];
+            return loots[Math.floor(Math.random() * loots.length)];
         }
 
         async function sendFactionMessage() {
@@ -520,105 +627,64 @@
             document.getElementById('profile-kills').textContent = 'Убийств: ' + (player.kills||0);
             document.getElementById('profile-deaths').textContent = 'Смертей: ' + (player.deaths||0);
             const savedAvatar = localStorage.getItem('warzone_avatar_' + player.id);
-            if (savedAvatar) {
-                document.getElementById('profile-avatar-img').src = savedAvatar;
-                document.getElementById('profile-avatar-img').style.display = 'block';
-                document.getElementById('profile-avatar-text').style.display = 'none';
-            } else {
-                document.getElementById('profile-avatar-img').style.display = 'none';
-                document.getElementById('profile-avatar-text').style.display = 'block';
-                document.getElementById('profile-avatar-text').textContent = player.faction === 'russia' ? '🔴' : '🔵';
-            }
+            if (savedAvatar) { document.getElementById('profile-avatar-img').src = savedAvatar; document.getElementById('profile-avatar-img').style.display='block'; document.getElementById('profile-avatar-text').style.display='none'; }
+            else { document.getElementById('profile-avatar-img').style.display='none'; document.getElementById('profile-avatar-text').style.display='block'; document.getElementById('profile-avatar-text').textContent = player.faction==='russia'?'🔴':'🔵'; }
             document.getElementById('profile-modal').style.display = 'flex';
         }
 
-        document.getElementById('profile-avatar').addEventListener('click', () => document.getElementById('avatar-upload').click());
+        document.getElementById('profile-avatar').addEventListener('click', ()=>document.getElementById('avatar-upload').click());
         document.getElementById('avatar-upload').addEventListener('change', function(e) {
             const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(ev) {
-                document.getElementById('profile-avatar-img').src = ev.target.result;
-                document.getElementById('profile-avatar-img').style.display = 'block';
-                document.getElementById('profile-avatar-text').style.display = 'none';
-                localStorage.setItem('warzone_avatar_' + player.id, ev.target.result);
-            };
+            reader.onload = function(ev) { document.getElementById('profile-avatar-img').src = ev.target.result; document.getElementById('profile-avatar-img').style.display='block'; document.getElementById('profile-avatar-text').style.display='none'; localStorage.setItem('warzone_avatar_'+player.id, ev.target.result); };
             reader.readAsDataURL(file);
         });
         document.getElementById('profile-modal').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
+        document.getElementById('inventory-modal').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
 
         function toggleMusic() {
-            const audio = document.getElementById('bg-music');
-            const btn = document.getElementById('music-btn');
-            if (musicPlaying) { audio.pause(); btn.textContent = '🔇'; musicPlaying = false; }
-            else { audio.volume = 0.12; audio.play().then(() => { btn.textContent = '🔊'; musicPlaying = true; }).catch(() => addMessage('system', '🔇 Не удалось')); }
+            const audio = document.getElementById('bg-music'), btn = document.getElementById('music-btn');
+            if (musicPlaying) { audio.pause(); btn.textContent='🔇'; musicPlaying=false; }
+            else { audio.volume=0.12; audio.play().then(()=>{btn.textContent='🔊';musicPlaying=true;}).catch(()=>addMessage('system','🔇 Не удалось')); }
         }
 
-        // Зум карты
         let mapZoom = 1, mapPanX = 0, mapPanY = 0;
         const mapSvg = document.getElementById('map-svg'), mapPanel = document.getElementById('map-panel');
-        mapPanel.addEventListener('wheel', function(e) {
-            e.preventDefault();
-            mapZoom = Math.min(2.5, Math.max(0.5, mapZoom + (e.deltaY > 0 ? -0.1 : 0.1)));
-            mapSvg.style.transform = 'translate(' + mapPanX + 'px, ' + mapPanY + 'px) scale(' + mapZoom + ')';
-        });
-        let touchStartX, touchStartY, lastPinchDist, isPanning = false;
-        mapPanel.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 2) { lastPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); return; }
-            touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; isPanning = true;
-        });
+        mapPanel.addEventListener('wheel', function(e) { e.preventDefault(); mapZoom = Math.min(2.5, Math.max(0.5, mapZoom + (e.deltaY>0?-0.1:0.1))); mapSvg.style.transform = 'translate('+mapPanX+'px,'+mapPanY+'px) scale('+mapZoom+')'; });
+        let tsx, tsy, lpd, isPanning = false;
+        mapPanel.addEventListener('touchstart', function(e) { if(e.touches.length===2){lpd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);return;} tsx=e.touches[0].clientX; tsy=e.touches[0].clientY; isPanning=true; });
         mapPanel.addEventListener('touchmove', function(e) {
-            if (e.touches.length === 2) {
-                const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                mapZoom = Math.min(2.5, Math.max(0.5, mapZoom + (dist - lastPinchDist) * 0.005));
-                lastPinchDist = dist;
-                mapSvg.style.transform = 'translate(' + mapPanX + 'px, ' + mapPanY + 'px) scale(' + mapZoom + ')';
-                return;
-            }
-            if (!isPanning || e.touches.length !== 1) return;
-            mapPanX += e.touches[0].clientX - touchStartX;
-            mapPanY += e.touches[0].clientY - touchStartY;
-            touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY;
-            mapSvg.style.transform = 'translate(' + mapPanX + 'px, ' + mapPanY + 'px) scale(' + mapZoom + ')';
+            if(e.touches.length===2){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY); mapZoom=Math.min(2.5,Math.max(0.5,mapZoom+(d-lpd)*0.005)); lpd=d; mapSvg.style.transform='translate('+mapPanX+'px,'+mapPanY+'px) scale('+mapZoom+')'; return;}
+            if(!isPanning||e.touches.length!==1)return; mapPanX+=e.touches[0].clientX-tsx; mapPanY+=e.touches[0].clientY-tsy; tsx=e.touches[0].clientX; tsy=e.touches[0].clientY; mapSvg.style.transform='translate('+mapPanX+'px,'+mapPanY+'px) scale('+mapZoom+')';
         });
-        mapPanel.addEventListener('dblclick', function() { mapZoom = 1; mapPanX = 0; mapPanY = 0; mapSvg.style.transform = ''; });
+        mapPanel.addEventListener('dblclick', function() { mapZoom=1; mapPanX=0; mapPanY=0; mapSvg.style.transform=''; });
 
-        // ========== ВСПЛЫВАЮЩИЕ СОБЫТИЯ ==========
-        function showEvent(title, text, imageUrl) {
+        function showEvent(title, text, emoji) {
+            document.getElementById('event-emoji').textContent = emoji || '🏴';
             document.getElementById('event-title').textContent = title;
             document.getElementById('event-text').textContent = text;
-            document.getElementById('event-image').src = imageUrl || EVENT_IMAGES[Math.floor(Math.random() * EVENT_IMAGES.length)];
             document.getElementById('event-popup').style.display = 'block';
-            // Автозакрытие через 8 секунд
             setTimeout(closeEvent, 8000);
         }
+        function closeEvent() { document.getElementById('event-popup').style.display = 'none'; }
 
-        function closeEvent() {
-            document.getElementById('event-popup').style.display = 'none';
-        }
-
-        // ========== БЕГУЩАЯ СТРОКА ==========
         async function updateNewsTicker() {
-            const newsItems = [];
-            Object.entries(gameState.locationControl || {}).forEach(([locId, c]) => {
+            const items = [];
+            Object.entries(gameState.locationControl||{}).forEach(([locId, c]) => {
                 const name = LOC_COORDS[locId]?.name || locId;
-                if (c.russia >= 65) newsItems.push(name + ' под контролем ВС РФ');
-                else if (c.ukraine >= 65) newsItems.push(name + ' под контролем ВСУ');
-                else newsItems.push('Бои за ' + name + ' продолжаются');
+                if (c.russia >= 65) items.push(name + ': ВС РФ');
+                else if (c.ukraine >= 65) items.push(name + ': ВСУ');
+                else items.push('Бои за ' + name);
             });
-            const alive = Object.values(gameState.players).filter(p => p.alive).length;
-            newsItems.push('Бойцов на фронте: ' + alive);
-            
-            document.getElementById('news-text').textContent = ' ⚔️ | ' + newsItems.join(' | ') + ' | ⚔️';
+            document.getElementById('news-text').textContent = ' ⚔️ | ' + items.join(' | ') + ' | ⚔️';
         }
 
         function updatePlayersOnLocation() {
             if (!player) return;
             const locPlayers = Object.values(gameState.players).filter(p => p.alive && p.location === player.location);
-            const container = document.getElementById('players-on-location');
             const loc = gameState.locations[player.location];
-            let bt = '';
-            if (loc?.buildings?.length) bt = '<br>🏗 ' + loc.buildings.map(b => BUILDING_EMOJI[b]||b).join(' ');
-            container.innerHTML = locPlayers.length === 0 ? '<span style="color:#555;">Никого</span>' + bt :
+            let bt = loc?.buildings?.length ? '<br>🏗 ' + loc.buildings.map(b=>BUILDING_EMOJI[b]||b).join(' ') : '';
+            document.getElementById('players-on-location').innerHTML = locPlayers.length === 0 ? '<span style="color:#555;">Никого</span>' + bt :
                 '<b style="color:#aaa;">📍 ' + (LOC_COORDS[player.location]?.name||'—') + ':</b>' + bt + '<br>' +
                 locPlayers.map(p => (p.faction==='russia'?'🔴':'🔵') + ' ' + p.name + ' [' + (p.rank||'—') + '] ' + p.hp + 'HP').join('<br>');
         }
@@ -630,67 +696,52 @@
             document.getElementById('disp-rank').textContent = (player.rank||'Ряд.').substring(0,4);
             document.getElementById('disp-loc').textContent = LOC_COORDS[player.location]?.name || '—';
             if (player.supplies !== undefined) document.getElementById('disp-meds').textContent = player.supplies;
-            const pct = ((player.hp||0) / (player.maxHp||100)) * 100;
+            const pct = ((player.hp||0)/(player.maxHp||100))*100;
             const hpFill = document.getElementById('hp-fill');
             hpFill.style.width = pct + '%';
-            hpFill.className = 'hp-bar-inner' + (pct <= 20 ? ' critical' : pct <= 40 ? ' low' : '');
+            hpFill.className = 'hp-bar-inner' + (pct<=20?' critical':pct<=40?' low':'');
         }
 
         function updateMap() {
             const svg = document.getElementById('map-svg');
             let html = '';
-            for (let i = 0; i < 600; i += 40) html += '<line x1="' + i + '" y1="0" x2="' + i + '" y2="500" class="map-bg-element"/>';
-            for (let i = 0; i < 500; i += 40) html += '<line x1="0" y1="' + i + '" x2="600" y2="' + i + '" class="map-bg-element"/>';
-            
-            // Проверка захватов
+            for (let i=0;i<600;i+=40) html += '<line x1="'+i+'" y1="0" x2="'+i+'" y2="500" class="map-bg-element"/>';
+            for (let i=0;i<500;i+=40) html += '<line x1="0" y1="'+i+'" x2="600" y2="'+i+'" class="map-bg-element"/>';
             Object.entries(LOC_COORDS).forEach(([id, loc]) => {
-                loc.neighbors.forEach(nid => {
-                    const n = LOC_COORDS[nid];
-                    if (n) html += '<line x1="' + loc.x + '" y1="' + loc.y + '" x2="' + n.x + '" y2="' + n.y + '" stroke="#1a2a1a" stroke-width="1" stroke-dasharray="3 3"/>';
-                });
+                loc.neighbors.forEach(nid => { const n=LOC_COORDS[nid]; if(n) html += '<line x1="'+loc.x+'" y1="'+loc.y+'" x2="'+n.x+'" y2="'+n.y+'" stroke="#1a2a1a" stroke-width="1" stroke-dasharray="3 3"/>'; });
                 const c = gameState.locationControl?.[id] || { russia:50, ukraine:50, control:'contested' };
-                let cls = 'contested';
-                if (c.control === 'russia' || c.russia >= 65) cls = 'russia';
-                else if (c.control === 'ukraine' || c.ukraine >= 65) cls = 'ukraine';
-                
-                // Отслеживание захвата
+                let cls = c.control==='russia'||c.russia>=65 ? 'russia' : c.control==='ukraine'||c.ukraine>=65 ? 'ukraine' : 'contested';
                 const prev = prevControl[id];
                 if (prev && prev !== cls) {
                     const locName = loc.name;
-                    if (cls === 'russia') showEvent('🏴 Захват!', 'Точка ' + locName + ' перешла под контроль ВС РФ!', EVENT_IMAGES[Math.floor(Math.random()*EVENT_IMAGES.length)]);
-                    else if (cls === 'ukraine') showEvent('🏴 Захват!', 'Точка ' + locName + ' перешла под контроль ВСУ!', EVENT_IMAGES[Math.floor(Math.random()*EVENT_IMAGES.length)]);
-                    else if (prev !== 'contested') showEvent('⚔️ Бои!', 'Начались ожесточённые бои за ' + locName + '!', EVENT_IMAGES[Math.floor(Math.random()*EVENT_IMAGES.length)]);
+                    if (cls === 'russia') showEvent('🏴 Захват!', locName + ' перешёл под контроль ВС РФ!', '🔴');
+                    else if (cls === 'ukraine') showEvent('🏴 Захват!', locName + ' перешёл под контроль ВСУ!', '🔵');
+                    else if (prev !== 'contested') showEvent('⚔️ Бои!', 'Ожесточённые бои за ' + locName + '!', '🟠');
                 }
                 prevControl[id] = cls;
-                
                 const isCurrent = player && player.location === id;
-                html += '<circle class="loc-point ' + cls + (isCurrent?' current':'') + '" cx="' + loc.x + '" cy="' + loc.y + '" r="15" onclick="clickOnMap(\'' + id + '\')"/>';
-                html += '<text x="' + loc.x + '" y="' + (loc.y+4) + '" class="loc-label">' + loc.name.split(' ')[0] + '</text>';
+                html += '<circle class="loc-point '+cls+(isCurrent?' current':'')+'" cx="'+loc.x+'" cy="'+loc.y+'" r="15" onclick="clickOnMap(\''+id+'\')"/>';
+                html += '<text x="'+loc.x+'" y="'+(loc.y+4)+'" class="loc-label">'+loc.name.split(' ')[0]+'</text>';
                 const locData = gameState.locations?.[id];
-                if (locData?.buildings?.length) html += '<text x="' + loc.x + '" y="' + (loc.y-14) + '" class="building-icon" text-anchor="middle">' + locData.buildings.map(b => BUILDING_EMOJI[b]||'').join('') + '</text>';
+                if (locData?.buildings?.length) html += '<text x="'+loc.x+'" y="'+(loc.y-14)+'" class="building-icon" text-anchor="middle">'+locData.buildings.map(b=>BUILDING_EMOJI[b]||'').join('')+'</text>';
             });
-            
-            Object.values(gameState.players).filter(p => p.alive).forEach(p => {
+            Object.values(gameState.players).filter(p=>p.alive).forEach(p => {
                 const loc = LOC_COORDS[p.location]; if (!loc) return;
-                html += '<circle cx="' + (loc.x+Math.sin(p.id.length*2.7)*12) + '" cy="' + (loc.y+Math.cos(p.id.length*2.7)*10) + '" r="4" fill="' + (p.faction==='russia'?'#ff4444':'#4488ff') + '" stroke="white" stroke-width="1" class="player-dot"><title>' + p.name + '</title></circle>';
+                html += '<circle cx="'+(loc.x+Math.sin(p.id.length*2.7)*12)+'" cy="'+(loc.y+Math.cos(p.id.length*2.7)*10)+'" r="4" fill="'+(p.faction==='russia'?'#ff4444':'#4488ff')+'" stroke="white" stroke-width="1" class="player-dot"><title>'+p.name+'</title></circle>';
             });
             svg.innerHTML = html;
-            
             let rus=0,ukr=0,cont=0;
             Object.values(gameState.locationControl||{}).forEach(c=>{if(c.russia>=65)rus++;else if(c.ukraine>=65)ukr++;else cont++;});
             document.getElementById('rus-total').textContent=rus;
             document.getElementById('ukr-total').textContent=ukr;
             document.getElementById('cont-total').textContent=cont;
             document.getElementById('players-online').textContent=Object.values(gameState.players).filter(p=>p.alive).length;
-            
             updateNewsTicker();
         }
 
         function clickOnMap(locId) {
-            const loc = gameState.locationControl?.[locId];
-            const locData = gameState.locations?.[locId];
-            const name = LOC_COORDS[locId]?.name || locId;
-            let info = '📍 ' + name + ': РФ ' + (loc?.russia||0) + '% / ВСУ ' + (loc?.ukraine||0) + '%';
+            const loc = gameState.locationControl?.[locId], locData = gameState.locations?.[locId];
+            let info = '📍 ' + (LOC_COORDS[locId]?.name||locId) + ': РФ ' + (loc?.russia||0) + '% / ВСУ ' + (loc?.ukraine||0) + '%';
             if (locData?.buildings?.length) info += ' | 🏗 ' + locData.buildings.join(', ');
             addMessage('system', info);
         }
@@ -702,14 +753,14 @@
             div.textContent = text;
             box.appendChild(div);
             const all = box.querySelectorAll('.msg');
-            if (all.length > MAX_VISIBLE_MSGS) for (let i = 0; i < all.length - MAX_VISIBLE_MSGS; i++) all[i].classList.add('old');
+            if (all.length > MAX_VISIBLE_MSGS) for (let i=0;i<all.length-MAX_VISIBLE_MSGS;i++) all[i].classList.add('old');
             box.scrollTop = box.scrollHeight;
         }
 
-        function setInputEnabled(e) { document.getElementById('action-input').disabled = !e; document.getElementById('btn-send').disabled = !e; }
+        function setInputEnabled(e) { document.getElementById('action-input').disabled=!e; document.getElementById('btn-send').disabled=!e; }
 
-        document.getElementById('action-input').addEventListener('keypress', e => { if (e.key==='Enter') sendAction(); });
-        document.getElementById('faction-input').addEventListener('keypress', e => { if (e.key==='Enter') sendFactionMessage(); });
+        document.getElementById('action-input').addEventListener('keypress', e=>{if(e.key==='Enter')sendAction();});
+        document.getElementById('faction-input').addEventListener('keypress', e=>{if(e.key==='Enter')sendFactionMessage();});
 
         async function pollState() {
             try {
@@ -720,32 +771,33 @@
                 updatePlayersOnLocation();
                 if (!player && savedPlayerId && data.players[savedPlayerId]?.alive) {
                     player = data.players[savedPlayerId];
+                    initInventory();
                     document.getElementById('auth-screen').classList.add('hidden');
                     document.getElementById('player-bar').classList.add('active');
                     document.getElementById('tab-bar').classList.add('active');
                     document.getElementById('quick-actions').classList.add('active');
-                    document.getElementById('action-input').disabled = false;
-                    document.getElementById('btn-send').disabled = false;
+                    document.getElementById('action-input').disabled=false;
+                    document.getElementById('btn-send').disabled=false;
                     document.getElementById('unit-flag').textContent = UNIT_EMOJI[player.faction]?.[player.unit] || '';
                     document.getElementById('disp-name').textContent = player.name;
-                    document.getElementById('btn-respawn').style.display = 'none';
-                    if (player.class === 'medic') { document.getElementById('btn-heal').style.display='inline-block'; document.getElementById('disp-supplies').style.display='inline'; }
+                    document.getElementById('btn-respawn').style.display='none';
+                    if (player.class==='medic'){document.getElementById('btn-heal').style.display='inline-block';document.getElementById('disp-supplies').style.display='inline';}
                     document.getElementById('class-info').textContent = '🎖 ' + CLASS_BUFFS[player.class].name;
                     updatePlayerUI(); updateMap(); updatePlayersOnLocation();
                     addMessage('system', '👋 С возвращением, ' + player.name + '!');
                 }
                 if (player && data.players[player.id]) {
                     const sp = data.players[player.id];
-                    if (sp.hp !== player.hp || sp.maxHp !== player.maxHp || sp.rank !== player.rank || sp.supplies !== player.supplies) { Object.assign(player, sp); updatePlayerUI(); }
-                    if (!sp.alive && player.alive) { player.alive = false; addMessage('kill', '💀 Ты погиб!'); handleDeath(); }
+                    if (sp.hp!==player.hp||sp.maxHp!==player.maxHp||sp.rank!==player.rank||sp.supplies!==player.supplies){Object.assign(player,sp);updatePlayerUI();}
+                    if (!sp.alive && player.alive){player.alive=false;addMessage('kill','💀 Ты погиб!');handleDeath();}
                 }
-            } catch (e) {}
+            } catch(e){}
         }
         setInterval(pollState, 8000);
-        document.getElementById('move-modal').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
+        document.getElementById('move-modal').addEventListener('click', function(e){if(e.target===this)this.style.display='none';});
 
         addMessage('system', '⚔️ WarZone RP 3.0 готов. Выбери сторону!');
         pollState();
     </script>
 </body>
-</html>
+                                                                                                                 </html>
