@@ -11,7 +11,24 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; height: 100vh; height: 100dvh; overflow: hidden; touch-action: manipulation; }
-        #app { display: grid; grid-template-columns: 1fr 1.2fr; height: 100vh; height: 100dvh; }
+
+        /* Бегущая строка */
+        #news-ticker {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 3000;
+            background: rgba(0,0,0,0.9); border-bottom: 1px solid var(--border);
+            padding: 4px 0; overflow: hidden; white-space: nowrap;
+            font-size: 0.7rem; color: #ddd; height: 22px;
+        }
+        #news-ticker span {
+            display: inline-block; padding-left: 100%;
+            animation: ticker 60s linear infinite;
+        }
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        #app { display: grid; grid-template-columns: 1fr 1.2fr; height: calc(100vh - 22px); height: calc(100dvh - 22px); margin-top: 22px; }
 
         #map-panel { position: relative; overflow: hidden; border-right: 2px solid var(--border); background: #0d1a0d; }
         #map-svg { width: 100%; height: 100%; transition: transform 0.1s; transform-origin: center; }
@@ -26,84 +43,114 @@
         .loc-label { fill: #fff; font-size: 8px; font-weight: bold; text-anchor: middle; pointer-events: none; paint-order: stroke; stroke: #000; stroke-width: 3px; }
         .building-icon { font-size: 10px; pointer-events: none; }
         .player-dot { transition: all 0.5s; pointer-events: none; }
-        #map-legend { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.9); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 0.65rem; z-index: 10; min-width: 140px; max-height: 50vh; overflow-y: auto; }
+        #map-legend { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.9); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 0.65rem; z-index: 10; min-width: 140px; max-height: 45vh; overflow-y: auto; }
         #map-legend h4 { color: var(--gold); margin-bottom: 4px; font-size: 0.7rem; }
         .legend-row { display: flex; align-items: center; gap: 4px; margin: 2px 0; }
-        .legend-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+        .legend-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
         .legend-dot.russia { background: var(--rus-red); } .legend-dot.ukraine { background: var(--ukr-blue); } .legend-dot.contested { background: var(--orange); }
         #players-on-location { margin-top: 4px; font-size: 0.6rem; color: #aaa; max-height: 50px; overflow-y: auto; }
         #class-info { margin-top: 3px; font-size: 0.55rem; color: var(--gold); }
 
+        /* Всплывающее событие */
+        #event-popup {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 2500; display: none; text-align: center;
+            background: rgba(0,0,0,0.95); border: 2px solid var(--gold);
+            border-radius: 16px; padding: 20px; max-width: 400px; width: 90%;
+            box-shadow: 0 0 60px rgba(200,168,64,0.5);
+            animation: popIn 0.5s ease;
+        }
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        #event-image { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
+        #event-title { color: var(--gold); font-size: 1.1rem; font-weight: bold; margin-bottom: 6px; }
+        #event-text { color: #ccc; font-size: 0.8rem; margin-bottom: 14px; }
+        #event-close { padding: 8px 24px; background: var(--gold); color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
         #chat-panel { display: flex; flex-direction: column; background: var(--panel); height: 100%; overflow: hidden; }
-        #auth-screen { padding: 12px; border-bottom: 2px solid var(--border); background: #101018; overflow-y: auto; flex-shrink: 0; }
+        #auth-screen { padding: 10px; border-bottom: 2px solid var(--border); background: #101018; overflow-y: auto; flex-shrink: 0; }
         #auth-screen.hidden { display: none; }
-        #auth-screen h2 { text-align: center; color: var(--gold); font-size: 0.95rem; margin-bottom: 6px; }
-        .faction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 6px; }
-        .faction-card { padding: 8px; border: 2px solid #222; border-radius: 6px; cursor: pointer; text-align: center; font-weight: bold; font-size: 0.8rem; background: transparent; color: #fff; }
+        #auth-screen h2 { text-align: center; color: var(--gold); font-size: 0.9rem; margin-bottom: 4px; }
+        .faction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 4px; }
+        .faction-card { padding: 7px; border: 2px solid #222; border-radius: 5px; cursor: pointer; text-align: center; font-weight: bold; font-size: 0.75rem; background: transparent; color: #fff; }
         .faction-card.russia-card { border-color: #4a1a1a; } .faction-card.russia-card.selected { background: #2a1018; border-color: var(--rus-red); }
         .faction-card.ukraine-card { border-color: #1a2a4a; } .faction-card.ukraine-card.selected { background: #101c3a; border-color: var(--ukr-blue); }
-        .units-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 6px; }
-        .unit-card { padding: 6px; border: 2px solid #2a2a2a; border-radius: 5px; cursor: pointer; text-align: center; background: #14141c; font-size: 0.7rem; }
-        .unit-card.selected { border-color: var(--gold); background: #1a1a28; } .unit-card .unit-emblem { font-size: 1.3rem; display: block; }
-        #char-form { display: flex; flex-direction: column; gap: 5px; }
-        #char-form input, #char-form select { padding: 6px; background: #1a1a24; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 0.75rem; }
-        .btn-primary { padding: 8px; background: var(--gold); color: #000; border: none; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
+        .units-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-bottom: 4px; }
+        .unit-card { padding: 5px; border: 2px solid #2a2a2a; border-radius: 4px; cursor: pointer; text-align: center; background: #14141c; font-size: 0.65rem; }
+        .unit-card.selected { border-color: var(--gold); background: #1a1a28; } .unit-card .unit-emblem { font-size: 1.2rem; display: block; }
+        #char-form { display: flex; flex-direction: column; gap: 4px; }
+        #char-form input, #char-form select { padding: 5px; background: #1a1a24; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 0.7rem; }
+        .btn-primary { padding: 7px; background: var(--gold); color: #000; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
         .btn-primary:disabled { background: #444; color: #888; }
-        .btn-respawn { padding: 8px; background: #4a2020; color: #faa; border: 2px solid #8b0000; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-top: 5px; display: none; }
+        .btn-respawn { padding: 7px; background: #4a2020; color: #faa; border: 2px solid #8b0000; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 0.75rem; margin-top: 4px; display: none; }
 
-        #player-bar { display: none; padding: 5px 8px; background: #0c0c16; border-bottom: 1px solid var(--border); font-size: 0.65rem; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 3px; flex-shrink: 0; }
+        #player-bar { display: none; padding: 4px 7px; background: #0c0c16; border-bottom: 1px solid var(--border); font-size: 0.62rem; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2px; flex-shrink: 0; }
         #player-bar.active { display: flex; }
         #disp-name { cursor: pointer; text-decoration: underline; }
-        .hp-bar-outer { width: 50px; height: 4px; background: #222; border-radius: 2px; overflow: hidden; }
+        .hp-bar-outer { width: 45px; height: 3px; background: #222; border-radius: 2px; overflow: hidden; }
         .hp-bar-inner { height: 100%; background: #4a4; transition: width 0.4s; }
         .hp-bar-inner.low { background: #a44; } .hp-bar-inner.critical { background: #a22; animation: blink 0.5s infinite; }
         @keyframes blink { 50%{opacity:0.3} }
 
-        #tab-bar { display: none; padding: 3px 6px; gap: 3px; background: #0a0a12; border-bottom: 1px solid var(--border); }
+        #tab-bar { display: none; padding: 2px 5px; gap: 2px; background: #0a0a12; border-bottom: 1px solid var(--border); }
         #tab-bar.active { display: flex; }
-        .tab-btn { padding: 4px 8px; background: #1a1a28; border: 1px solid #333; color: #888; border-radius: 8px; font-size: 0.65rem; cursor: pointer; }
+        .tab-btn { padding: 3px 7px; background: #1a1a28; border: 1px solid #333; color: #888; border-radius: 7px; font-size: 0.6rem; cursor: pointer; }
         .tab-btn.active { background: #2a2a38; color: #fff; border-color: var(--gold); }
 
-        #messages-box { flex: 1; overflow-y: auto; padding: 6px; display: flex; flex-direction: column; gap: 4px; -webkit-overflow-scrolling: touch; }
-        #faction-chat-box { flex: 1; overflow-y: auto; padding: 6px; display: none; flex-direction: column; gap: 3px; -webkit-overflow-scrolling: touch; }
+        #messages-box { flex: 1; overflow-y: auto; padding: 5px; display: flex; flex-direction: column; gap: 3px; -webkit-overflow-scrolling: touch; }
+        #faction-chat-box { flex: 1; overflow-y: auto; padding: 5px; display: none; flex-direction: column; gap: 2px; -webkit-overflow-scrolling: touch; }
         #faction-chat-box.active { display: flex; }
         #messages-box.active { display: flex; }
 
-        .msg { padding: 5px 8px; border-radius: 5px; max-width: 85%; font-size: 0.7rem; line-height: 1.3; animation: msgIn 0.2s; }
-        @keyframes msgIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
-        .msg.ai { background: #141420; border-left: 3px solid var(--gold); align-self: flex-start; }
-        .msg.commander { background: #1a1420; border-left: 3px solid #a040d0; align-self: flex-start; color: #d0c0e0; }
-        .msg.player { background: #141c14; border-right: 3px solid #4a7a4a; align-self: flex-end; color: #b8c8b8; }
-        .msg.system { background: #181818; color: #777; align-self: center; font-style: italic; font-size: 0.6rem; text-align: center; }
+        .msg { padding: 4px 7px; border-radius: 4px; max-width: 85%; font-size: 0.65rem; line-height: 1.25; animation: msgIn 0.2s; }
+        @keyframes msgIn { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:translateY(0)} }
+        .msg.ai { background: #141420; border-left: 2px solid var(--gold); align-self: flex-start; }
+        .msg.commander { background: #1a1420; border-left: 2px solid #a040d0; align-self: flex-start; color: #d0c0e0; }
+        .msg.player { background: #141c14; border-right: 2px solid #4a7a4a; align-self: flex-end; color: #b8c8b8; }
+        .msg.system { background: #181818; color: #777; align-self: center; font-style: italic; font-size: 0.58rem; text-align: center; }
         .msg.kill { background: #1a1010; border: 1px solid #4a2020; color: #d08080; align-self: center; text-align: center; }
         .msg.control { background: #101a10; border: 1px solid #2a4a2a; color: #80c080; align-self: center; text-align: center; }
-        .msg.faction { background: #1a1a20; border-left: 3px solid #6666aa; align-self: flex-start; font-size: 0.65rem; }
+        .msg.faction { background: #1a1a20; border-left: 2px solid #6666aa; align-self: flex-start; font-size: 0.6rem; }
         .msg.old { opacity: 0.3; }
 
-        #input-area { padding: 6px; border-top: 2px solid var(--border); display: flex; gap: 5px; background: #0e0e16; flex-shrink: 0; }
-        #action-input { flex: 1; padding: 7px 10px; background: #1a1a24; border: 1px solid #333; color: #fff; border-radius: 16px; font-size: 0.7rem; }
+        #input-area { padding: 5px; border-top: 2px solid var(--border); display: flex; gap: 4px; background: #0e0e16; flex-shrink: 0; }
+        #action-input { flex: 1; padding: 6px 9px; background: #1a1a24; border: 1px solid #333; color: #fff; border-radius: 14px; font-size: 0.65rem; }
         #action-input:disabled { opacity: 0.4; }
-        #faction-input { flex: 1; padding: 7px 10px; background: #1a1a24; border: 1px solid #333; color: #fff; border-radius: 16px; font-size: 0.7rem; display: none; }
+        #faction-input { flex: 1; padding: 6px 9px; background: #1a1a24; border: 1px solid #333; color: #fff; border-radius: 14px; font-size: 0.65rem; display: none; }
         #faction-input.active { display: block; }
         #action-input.hidden { display: none; }
-        .btn-send { width: 34px; height: 34px; border-radius: 50%; background: var(--gold); color: #000; border: none; font-size: 0.9rem; cursor: pointer; flex-shrink: 0; }
+        .btn-send { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: #000; border: none; font-size: 0.8rem; cursor: pointer; flex-shrink: 0; }
         .btn-send:disabled { background: #333; color: #666; }
 
-        #quick-actions { display: none; padding: 4px 6px; gap: 3px; flex-wrap: wrap; border-top: 1px solid var(--border); background: #0a0a12; flex-shrink: 0; }
+        #quick-actions { display: none; padding: 3px 5px; gap: 2px; flex-wrap: wrap; border-top: 1px solid var(--border); background: #0a0a12; flex-shrink: 0; }
         #quick-actions.active { display: flex; }
-        .quick-btn { padding: 4px 7px; background: #1a1a28; border: 1px solid #333; color: #bbb; border-radius: 10px; font-size: 0.6rem; cursor: pointer; }
+        .quick-btn { padding: 3px 6px; background: #1a1a28; border: 1px solid #333; color: #bbb; border-radius: 8px; font-size: 0.58rem; cursor: pointer; }
         .quick-btn.move-btn { border-color: #2a4a2a; color: #8c8; }
         .quick-btn.heal-btn { border-color: #2a3a4a; color: #8ac; }
 
-        #music-btn { position: fixed; bottom: 70px; right: 12px; z-index: 500; width: 38px; height: 38px; border-radius: 50%; background: rgba(0,0,0,0.85); border: 1px solid var(--border); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        #music-btn { position: fixed; bottom: 65px; right: 10px; z-index: 500; width: 34px; height: 34px; border-radius: 50%; background: rgba(0,0,0,0.85); border: 1px solid var(--border); color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
         @media (max-width: 768px) {
             #app { grid-template-columns: 1fr; grid-template-rows: 35vh 1fr; }
             #map-panel { border-right: none; border-bottom: 2px solid var(--border); }
+            #event-image { height: 120px; }
         }
     </style>
 </head>
 <body>
+    <!-- Бегущая строка -->
+    <div id="news-ticker"><span id="news-text">⚔️ Загрузка сводок с фронта...</span></div>
+
+    <!-- Всплывающее событие -->
+    <div id="event-popup">
+        <img id="event-image" src="" alt="Событие">
+        <div id="event-title"></div>
+        <div id="event-text"></div>
+        <button id="event-close" onclick="closeEvent()">Понятно</button>
+    </div>
+
     <div id="app">
         <div id="map-panel">
             <svg id="map-svg" viewBox="0 0 600 500"></svg>
@@ -112,7 +159,7 @@
                 <div class="legend-row"><span class="legend-dot russia"></span> РФ: <b id="rus-total">0</b></div>
                 <div class="legend-row"><span class="legend-dot ukraine"></span> ВСУ: <b id="ukr-total">0</b></div>
                 <div class="legend-row"><span class="legend-dot contested"></span> Бои: <b id="cont-total">0</b></div>
-                <div style="margin-top:4px;font-size:0.6rem;">👥 Онлайн: <b id="players-online">0</b></div>
+                <div style="margin-top:3px;font-size:0.55rem;">👥 <b id="players-online">0</b></div>
                 <div id="players-on-location"></div>
                 <div id="class-info"></div>
                 <button class="btn-respawn" id="btn-respawn" onclick="respawnPlayer()">🔄 Новый боец</button>
@@ -123,18 +170,18 @@
             <div id="auth-screen">
                 <h2>⚔️ WARZONE RP</h2>
                 <div class="faction-grid">
-                    <button class="faction-card russia-card" data-faction="russia" onclick="selectFaction('russia')">🇷🇺 ВС РФ</button>
-                    <button class="faction-card ukraine-card" data-faction="ukraine" onclick="selectFaction('ukraine')">🇺🇦 ВСУ</button>
+                    <button class="faction-card russia-card" onclick="selectFaction('russia')">🇷🇺 ВС РФ</button>
+                    <button class="faction-card ukraine-card" onclick="selectFaction('ukraine')">🇺🇦 ВСУ</button>
                 </div>
                 <div class="units-grid" id="units-grid" style="display:none;"></div>
                 <div id="char-form" style="display:none;">
                     <input type="text" id="inp-name" placeholder="Позывной" maxlength="20">
                     <select id="inp-class">
-                        <option value="rifleman">🔫 Стрелок (+выживаемость)</option>
-                        <option value="sniper">🎯 Снайпер (+точность)</option>
-                        <option value="medic">💉 Медик (лечение)</option>
-                        <option value="engineer">🔧 Инженер (+укрепления)</option>
-                        <option value="commander">⭐ Командир (+мораль)</option>
+                        <option value="rifleman">🔫 Стрелок</option>
+                        <option value="sniper">🎯 Снайпер</option>
+                        <option value="medic">💉 Медик</option>
+                        <option value="engineer">🔧 Инженер</option>
+                        <option value="commander">⭐ Командир</option>
                     </select>
                     <input type="text" id="inp-look" placeholder="Внешность" maxlength="50">
                     <button class="btn-primary" id="btn-join" onclick="joinGame()">🪖 НА ФРОНТ</button>
@@ -144,9 +191,9 @@
             <div id="player-bar">
                 <span id="unit-flag"></span>
                 <b id="disp-name" onclick="showProfile()">—</b>
-                <span id="disp-rank">Рядовой</span>
+                <span id="disp-rank">Ряд.</span>
                 <span>📍<span id="disp-loc">—</span></span>
-                <span>❤️<span id="disp-hp">100</span>/<span id="disp-maxhp">100</span></span>
+                <span>❤️<span id="disp-hp">100</span></span>
                 <span id="disp-supplies" style="display:none;">💊<span id="disp-meds">0</span></span>
                 <div class="hp-bar-outer"><div class="hp-bar-inner" id="hp-fill" style="width:100%"></div></div>
                 <button class="quick-btn" onclick="getCommanderOrder()">📻</button>
@@ -165,15 +212,15 @@
                 <button class="quick-btn" onclick="quickAction('Атакую противника')">⚔️</button>
                 <button class="quick-btn" onclick="quickAction('Укрепляю позицию')">🛡</button>
                 <button class="quick-btn" onclick="quickAction('Провожу разведку')">🔭</button>
-                <button class="quick-btn heal-btn" id="btn-heal" onclick="quickAction('Лечу раненого союзника')" style="display:none;">💉</button>
+                <button class="quick-btn heal-btn" id="btn-heal" onclick="quickAction('Лечу раненого')" style="display:none;">💉</button>
                 <button class="quick-btn move-btn" onclick="showMoveMenu()">🚶</button>
                 <button class="quick-btn" onclick="quickAction('Захватываю точку')">🏴</button>
-                <button class="quick-btn" onclick="quickAction('Отхожу в укрытие')">🏳️</button>
+                <button class="quick-btn" onclick="quickAction('Отхожу')">🏳️</button>
             </div>
 
             <div id="input-area">
-                <input type="text" id="action-input" placeholder="Опиши действие..." disabled>
-                <input type="text" id="faction-input" placeholder="Сообщение фракции...">
+                <input type="text" id="action-input" placeholder="Действие..." disabled>
+                <input type="text" id="faction-input" placeholder="Фракции...">
                 <button class="btn-send" id="btn-send" disabled onclick="sendAction()">▶</button>
             </div>
         </div>
@@ -181,20 +228,20 @@
 
     <div id="profile-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;">
         <div style="background:#1a1a24;border:1px solid #333;border-radius:12px;padding:20px;max-width:320px;width:90%;text-align:center;">
-            <div id="profile-avatar" style="width:80px;height:80px;border-radius:50%;background:#222;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:40px;cursor:pointer;overflow:hidden;border:2px solid var(--gold);">
+            <div id="profile-avatar" style="width:70px;height:70px;border-radius:50%;background:#222;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:35px;cursor:pointer;overflow:hidden;border:2px solid var(--gold);">
                 <span id="profile-avatar-text">🪖</span>
                 <img id="profile-avatar-img" style="display:none;width:100%;height:100%;object-fit:cover;">
             </div>
             <input type="file" id="avatar-upload" accept="image/*" style="display:none;">
-            <p style="font-size:0.6rem;color:#888;margin-bottom:8px;">Нажми на иконку чтобы загрузить аватар</p>
-            <h3 id="profile-name" style="color:var(--gold);margin-bottom:4px;">—</h3>
-            <p id="profile-rank" style="color:#aaa;margin-bottom:2px;font-size:0.8rem;">—</p>
-            <p id="profile-class" style="color:#ccc;margin-bottom:2px;font-size:0.8rem;">—</p>
-            <p id="profile-unit" style="color:#ccc;margin-bottom:2px;font-size:0.8rem;">—</p>
-            <p id="profile-hp" style="color:#4a4;margin-bottom:2px;font-size:0.8rem;">—</p>
-            <p id="profile-kills" style="color:#c44;margin-bottom:2px;font-size:0.8rem;">—</p>
-            <p id="profile-deaths" style="color:#888;margin-bottom:10px;font-size:0.8rem;">—</p>
-            <button onclick="document.getElementById('profile-modal').style.display='none'" style="padding:8px 24px;background:var(--gold);color:#000;border:none;border-radius:5px;cursor:pointer;font-weight:bold;">Закрыть</button>
+            <p style="font-size:0.55rem;color:#888;margin-bottom:6px;">Нажми на иконку для аватара</p>
+            <h3 id="profile-name" style="color:var(--gold);margin-bottom:3px;">—</h3>
+            <p id="profile-rank" style="color:#aaa;margin-bottom:2px;font-size:0.75rem;">—</p>
+            <p id="profile-class" style="color:#ccc;margin-bottom:2px;font-size:0.75rem;">—</p>
+            <p id="profile-unit" style="color:#ccc;margin-bottom:2px;font-size:0.75rem;">—</p>
+            <p id="profile-hp" style="color:#4a4;margin-bottom:2px;font-size:0.75rem;">—</p>
+            <p id="profile-kills" style="color:#c44;margin-bottom:2px;font-size:0.75rem;">—</p>
+            <p id="profile-deaths" style="color:#888;margin-bottom:8px;font-size:0.75rem;">—</p>
+            <button onclick="document.getElementById('profile-modal').style.display='none'" style="padding:7px 20px;background:var(--gold);color:#000;border:none;border-radius:5px;cursor:pointer;font-weight:bold;">Закрыть</button>
         </div>
     </div>
 
@@ -212,28 +259,24 @@
     </audio>
 
     <script>
-        let player = null;
-        let selectedFaction = null;
-        let selectedUnit = null;
+        let player = null, selectedFaction = null, selectedUnit = null;
         let gameState = { locations: {}, players: {}, locationControl: {} };
         const MAX_VISIBLE_MSGS = 50;
         let savedPlayerId = localStorage.getItem('warzone_playerId');
-        let currentTab = 'game';
-        let musicPlaying = false;
+        let currentTab = 'game', musicPlaying = false;
+        let prevControl = {}; // Для отслеживания захватов
 
         const UNIT_EMOJI = {
             russia: { somali: '🦂', pyatnashka: '1️⃣5️⃣', sparta: '⚔️', wolves: '🐺' },
             ukraine: { azov: '🔱', aidar: '⚔️', kraken: '🐙', ghost: '💀' }
         };
-
         const CLASS_BUFFS = {
             rifleman: { name: 'Стрелок', buff: 'survivability', desc: 'Выживаемость +15%' },
             sniper: { name: 'Снайпер', buff: 'accuracy', desc: 'Точность +20%' },
-            medic: { name: 'Медик', buff: 'heal', desc: 'Лечение союзников' },
+            medic: { name: 'Медик', buff: 'heal', desc: 'Лечение' },
             engineer: { name: 'Инженер', buff: 'sabotage', desc: 'Укрепления +15%' },
             commander: { name: 'Командир', buff: 'morale', desc: 'Мораль +10%' }
         };
-
         const BUILDING_EMOJI = { base: '🏰', checkpoint: '🛂', warehouse: '📦', hospital: '🏥', barrack: '🛏️' };
 
         const LOC_COORDS = {
@@ -254,10 +297,24 @@
             kupiansk: { x: 460, y: 190, name: 'Купянск', neighbors: ['kharkiv','izyum'] }
         };
 
+        // Картинки для событий
+        const EVENT_IMAGES = [
+            'https://images.unsplash.com/photo-1518531933037-91b2bf5d289d?w=600', // руины
+            'https://images.unsplash.com/photo-1580130775561-36e1e7b63aba?w=600', // окопы
+            'https://images.unsplash.com/photo-1547496575-6429d2aae7d5?w=600', // военная техника
+            'https://images.unsplash.com/photo-1508807701374-411a0e2c7f27?w=600', // город после боя
+            'https://images.unsplash.com/photo-1517352159731-8ec3b2b3f67b?w=600', // солдаты в поле
+            'https://images.unsplash.com/photo-1579952290112-7b59ba1f3d0e?w=600', // военный бинокль
+            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600', // техника
+            'https://images.unsplash.com/photo-1579520011962-937d43a4d6a8?w=600', // поле боя
+            'https://images.unsplash.com/photo-1489944440096-cb7d0f4f2d4d?w=600', // военный грузовик
+            'https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?w=600'  // туман войны
+        ];
+
         function selectFaction(faction) {
             selectedFaction = faction; selectedUnit = null;
             document.querySelectorAll('.faction-card').forEach(c => c.classList.remove('selected'));
-            document.querySelector(`[data-faction="${faction}"]`).classList.add('selected');
+            document.querySelector('.faction-card.' + faction + '-card').classList.add('selected');
             const grid = document.getElementById('units-grid');
             grid.style.display = 'grid'; grid.innerHTML = '';
             const units = faction === 'russia' ? ['somali','pyatnashka','sparta','wolves'] : ['azov','aidar','kraken','ghost'];
@@ -266,7 +323,7 @@
                 const card = document.createElement('div');
                 card.className = 'unit-card';
                 card.onclick = () => { selectedUnit = uid; document.querySelectorAll('.unit-card').forEach(c=>c.classList.remove('selected')); card.classList.add('selected'); document.getElementById('char-form').style.display='flex'; };
-                card.innerHTML = `<span class="unit-emblem">${UNIT_EMOJI[faction][uid]}</span>${names[uid]}`;
+                card.innerHTML = '<span class="unit-emblem">' + UNIT_EMOJI[faction][uid] + '</span>' + names[uid];
                 grid.appendChild(card);
             });
             document.getElementById('char-form').style.display = 'none';
@@ -274,22 +331,13 @@
 
         function switchTab(tab) {
             currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-btn')[tab === 'game' ? 0 : 1].classList.add('active');
-            if (tab === 'game') {
-                document.getElementById('messages-box').classList.add('active');
-                document.getElementById('faction-chat-box').classList.remove('active');
-                document.getElementById('action-input').classList.remove('hidden');
-                document.getElementById('faction-input').classList.remove('active');
-                document.getElementById('btn-send').onclick = sendAction;
-            } else {
-                document.getElementById('messages-box').classList.remove('active');
-                document.getElementById('faction-chat-box').classList.add('active');
-                document.getElementById('action-input').classList.add('hidden');
-                document.getElementById('faction-input').classList.add('active');
-                document.getElementById('btn-send').onclick = sendFactionMessage;
-                loadFactionChat();
-            }
+            document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i === (tab === 'game' ? 0 : 1)));
+            document.getElementById('messages-box').classList.toggle('active', tab === 'game');
+            document.getElementById('faction-chat-box').classList.toggle('active', tab === 'faction');
+            document.getElementById('action-input').classList.toggle('hidden', tab !== 'game');
+            document.getElementById('faction-input').classList.toggle('active', tab === 'faction');
+            document.getElementById('btn-send').onclick = tab === 'game' ? sendAction : sendFactionMessage;
+            if (tab === 'faction') loadFactionChat();
         }
 
         async function joinGame() {
@@ -327,7 +375,7 @@
 
         async function respawnPlayer() {
             if (!player) return;
-            const name = prompt('Позывной для нового бойца:', player.name);
+            const name = prompt('Позывной:', player.name);
             if (!name) return;
             try {
                 const resp = await fetch('/api/respawn', {
@@ -344,7 +392,7 @@
                 document.getElementById('quick-actions').classList.add('active');
                 addMessage('system', data.message);
                 updatePlayerUI(); updateMap(); updatePlayersOnLocation();
-            } catch (e) { addMessage('system', '❌ Ошибка возрождения'); }
+            } catch (e) { addMessage('system', '❌ Ошибка'); }
         }
 
         async function sendAction() {
@@ -382,13 +430,7 @@
             const message = input.value.trim();
             if (!message || !player) return;
             input.value = '';
-            try {
-                await fetch('/api/faction-chat', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ playerId: player.id, message })
-                });
-                loadFactionChat();
-            } catch (e) {}
+            try { await fetch('/api/faction-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId: player.id, message }) }); loadFactionChat(); } catch (e) {}
         }
 
         async function loadFactionChat() {
@@ -401,7 +443,7 @@
                 (data.chat || []).forEach(msg => {
                     const div = document.createElement('div');
                     div.className = 'msg faction';
-                    div.textContent = (msg.unit || '') + ' ' + msg.playerName + ': ' + msg.message;
+                    div.textContent = (msg.unit||'') + ' ' + msg.playerName + ': ' + msg.message;
                     box.appendChild(div);
                 });
                 box.scrollTop = box.scrollHeight;
@@ -423,10 +465,9 @@
             const neighbors = LOC_COORDS[player.location]?.neighbors || [];
             const container = document.getElementById('move-options');
             container.innerHTML = '';
-            if (neighbors.length === 0) { container.innerHTML = '<p style="color:#888;">Нет доступных точек.</p>'; }
+            if (!neighbors.length) { container.innerHTML = '<p style="color:#888;">Нет точек.</p>'; }
             neighbors.forEach(locId => {
-                const loc = gameState.locationControl?.[locId];
-                if (!loc) return;
+                const loc = gameState.locationControl?.[locId]; if (!loc) return;
                 const locName = LOC_COORDS[locId]?.name || locId;
                 const myPower = player.faction === 'russia' ? loc.russia : loc.ukraine;
                 const enemyPower = player.faction === 'russia' ? loc.ukraine : loc.russia;
@@ -434,7 +475,7 @@
                 let riskColor = canMove ? (myPower >= 65 ? '#8c8' : '#cc8') : '#c44';
                 let riskText = !canMove ? '🚫 Враг >70%' : (myPower >= 65 ? '✅ Безопасно' : '⚠️ Опасно');
                 const btn = document.createElement('button');
-                btn.style.cssText = 'width:100%;padding:10px;margin:4px 0;background:#1a1a24;border:2px solid ' + riskColor + ';color:' + (canMove ? '#fff' : '#888') + ';border-radius:5px;cursor:' + (canMove ? 'pointer' : 'not-allowed') + ';text-align:left;';
+                btn.style.cssText = 'width:100%;padding:10px;margin:4px 0;background:#1a1a24;border:2px solid ' + riskColor + ';color:' + (canMove?'#fff':'#888') + ';border-radius:5px;cursor:' + (canMove?'pointer':'not-allowed') + ';text-align:left;';
                 btn.innerHTML = '📍 <b>' + locName + '</b><br><small>РФ:' + loc.russia + '% / ВСУ:' + loc.ukraine + '%</small><br><small style="color:' + riskColor + ';">' + riskText + '</small>';
                 btn.disabled = !canMove;
                 if (canMove) btn.onclick = () => moveToLocation(locId, locName);
@@ -446,10 +487,7 @@
         async function moveToLocation(locId, locName) {
             if (!player) return;
             try {
-                const resp = await fetch('/api/move', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ playerId: player.id, location: locId })
-                });
+                const resp = await fetch('/api/move', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId: player.id, location: locId }) });
                 const data = await resp.json();
                 if (data.success) {
                     player.location = locId;
@@ -475,12 +513,12 @@
         function showProfile() {
             if (!player) return;
             document.getElementById('profile-name').textContent = player.name;
-            document.getElementById('profile-rank').textContent = 'Ранг: ' + (player.rank || 'Рядовой');
-            document.getElementById('profile-class').textContent = 'Класс: ' + (CLASS_BUFFS[player.class]?.name || '—');
-            document.getElementById('profile-unit').textContent = 'Подразделение: ' + (UNIT_EMOJI[player.faction]?.[player.unit] || '') + ' ' + (player.unit || '—');
-            document.getElementById('profile-hp').textContent = 'HP: ' + (player.hp || 0) + '/' + (player.maxHp || 100);
-            document.getElementById('profile-kills').textContent = 'Убийств: ' + (player.kills || 0);
-            document.getElementById('profile-deaths').textContent = 'Смертей: ' + (player.deaths || 0);
+            document.getElementById('profile-rank').textContent = 'Ранг: ' + (player.rank||'Рядовой');
+            document.getElementById('profile-class').textContent = 'Класс: ' + (CLASS_BUFFS[player.class]?.name||'—');
+            document.getElementById('profile-unit').textContent = 'Подразделение: ' + (UNIT_EMOJI[player.faction]?.[player.unit]||'') + ' ' + (player.unit||'—');
+            document.getElementById('profile-hp').textContent = 'HP: ' + (player.hp||0) + '/' + (player.maxHp||100);
+            document.getElementById('profile-kills').textContent = 'Убийств: ' + (player.kills||0);
+            document.getElementById('profile-deaths').textContent = 'Смертей: ' + (player.deaths||0);
             const savedAvatar = localStorage.getItem('warzone_avatar_' + player.id);
             if (savedAvatar) {
                 document.getElementById('profile-avatar-img').src = savedAvatar;
@@ -494,91 +532,83 @@
             document.getElementById('profile-modal').style.display = 'flex';
         }
 
-        document.getElementById('profile-avatar').addEventListener('click', () => {
-            document.getElementById('avatar-upload').click();
-        });
-
+        document.getElementById('profile-avatar').addEventListener('click', () => document.getElementById('avatar-upload').click());
         document.getElementById('avatar-upload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+            const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(event) {
-                const imgData = event.target.result;
-                document.getElementById('profile-avatar-img').src = imgData;
+            reader.onload = function(ev) {
+                document.getElementById('profile-avatar-img').src = ev.target.result;
                 document.getElementById('profile-avatar-img').style.display = 'block';
                 document.getElementById('profile-avatar-text').style.display = 'none';
-                localStorage.setItem('warzone_avatar_' + player.id, imgData);
+                localStorage.setItem('warzone_avatar_' + player.id, ev.target.result);
             };
             reader.readAsDataURL(file);
         });
-
-        document.getElementById('profile-modal').addEventListener('click', function(e) {
-            if (e.target === this) this.style.display = 'none';
-        });
+        document.getElementById('profile-modal').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
 
         function toggleMusic() {
             const audio = document.getElementById('bg-music');
             const btn = document.getElementById('music-btn');
-            if (musicPlaying) {
-                audio.pause();
-                btn.textContent = '🔇';
-                musicPlaying = false;
-            } else {
-                audio.volume = 0.15;
-                audio.play().then(() => {
-                    btn.textContent = '🔊';
-                    musicPlaying = true;
-                }).catch(() => {
-                    addMessage('system', '🔇 Не удалось включить музыку. Нажми ещё раз.');
-                });
-            }
+            if (musicPlaying) { audio.pause(); btn.textContent = '🔇'; musicPlaying = false; }
+            else { audio.volume = 0.12; audio.play().then(() => { btn.textContent = '🔊'; musicPlaying = true; }).catch(() => addMessage('system', '🔇 Не удалось')); }
         }
 
+        // Зум карты
         let mapZoom = 1, mapPanX = 0, mapPanY = 0;
-        const mapSvg = document.getElementById('map-svg');
-        const mapPanel = document.getElementById('map-panel');
-
+        const mapSvg = document.getElementById('map-svg'), mapPanel = document.getElementById('map-panel');
         mapPanel.addEventListener('wheel', function(e) {
             e.preventDefault();
             mapZoom = Math.min(2.5, Math.max(0.5, mapZoom + (e.deltaY > 0 ? -0.1 : 0.1)));
-            applyMapTransform();
+            mapSvg.style.transform = 'translate(' + mapPanX + 'px, ' + mapPanY + 'px) scale(' + mapZoom + ')';
         });
-
         let touchStartX, touchStartY, lastPinchDist, isPanning = false;
         mapPanel.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 2) {
-                lastPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                return;
-            }
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            isPanning = true;
+            if (e.touches.length === 2) { lastPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); return; }
+            touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; isPanning = true;
         });
-
         mapPanel.addEventListener('touchmove', function(e) {
             if (e.touches.length === 2) {
                 const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
                 mapZoom = Math.min(2.5, Math.max(0.5, mapZoom + (dist - lastPinchDist) * 0.005));
                 lastPinchDist = dist;
-                applyMapTransform();
+                mapSvg.style.transform = 'translate(' + mapPanX + 'px, ' + mapPanY + 'px) scale(' + mapZoom + ')';
                 return;
             }
             if (!isPanning || e.touches.length !== 1) return;
-            const dx = e.touches[0].clientX - touchStartX;
-            const dy = e.touches[0].clientY - touchStartY;
-            mapPanX += dx; mapPanY += dy;
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            applyMapTransform();
-        });
-
-        mapPanel.addEventListener('dblclick', function() {
-            mapZoom = 1; mapPanX = 0; mapPanY = 0;
-            applyMapTransform();
-        });
-
-        function applyMapTransform() {
+            mapPanX += e.touches[0].clientX - touchStartX;
+            mapPanY += e.touches[0].clientY - touchStartY;
+            touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY;
             mapSvg.style.transform = 'translate(' + mapPanX + 'px, ' + mapPanY + 'px) scale(' + mapZoom + ')';
+        });
+        mapPanel.addEventListener('dblclick', function() { mapZoom = 1; mapPanX = 0; mapPanY = 0; mapSvg.style.transform = ''; });
+
+        // ========== ВСПЛЫВАЮЩИЕ СОБЫТИЯ ==========
+        function showEvent(title, text, imageUrl) {
+            document.getElementById('event-title').textContent = title;
+            document.getElementById('event-text').textContent = text;
+            document.getElementById('event-image').src = imageUrl || EVENT_IMAGES[Math.floor(Math.random() * EVENT_IMAGES.length)];
+            document.getElementById('event-popup').style.display = 'block';
+            // Автозакрытие через 8 секунд
+            setTimeout(closeEvent, 8000);
+        }
+
+        function closeEvent() {
+            document.getElementById('event-popup').style.display = 'none';
+        }
+
+        // ========== БЕГУЩАЯ СТРОКА ==========
+        async function updateNewsTicker() {
+            const newsItems = [];
+            Object.entries(gameState.locationControl || {}).forEach(([locId, c]) => {
+                const name = LOC_COORDS[locId]?.name || locId;
+                if (c.russia >= 65) newsItems.push(name + ' под контролем ВС РФ');
+                else if (c.ukraine >= 65) newsItems.push(name + ' под контролем ВСУ');
+                else newsItems.push('Бои за ' + name + ' продолжаются');
+            });
+            const alive = Object.values(gameState.players).filter(p => p.alive).length;
+            newsItems.push('Бойцов на фронте: ' + alive);
+            
+            document.getElementById('news-text').textContent = ' ⚔️ | ' + newsItems.join(' | ') + ' | ⚔️';
         }
 
         function updatePlayersOnLocation() {
@@ -586,31 +616,24 @@
             const locPlayers = Object.values(gameState.players).filter(p => p.alive && p.location === player.location);
             const container = document.getElementById('players-on-location');
             const loc = gameState.locations[player.location];
-            let buildingsText = '';
-            if (loc?.buildings?.length > 0) {
-                buildingsText = '<br>🏗 ' + loc.buildings.map(b => BUILDING_EMOJI[b] || b).join(' ');
-            }
-            if (locPlayers.length === 0) { container.innerHTML = '<span style="color:#555;">Никого рядом</span>' + buildingsText; }
-            else {
-                container.innerHTML = '<b style="color:#aaa;">📍 ' + (LOC_COORDS[player.location]?.name || '—') + ':</b>' + buildingsText + '<br>' +
-                    locPlayers.map(p => (p.faction === 'russia' ? '🔴' : '🔵') + ' ' + p.name + ' [' + (p.rank || '—') + '] ' + p.hp + '/' + (p.maxHp || 100) + 'HP').join('<br>');
-            }
+            let bt = '';
+            if (loc?.buildings?.length) bt = '<br>🏗 ' + loc.buildings.map(b => BUILDING_EMOJI[b]||b).join(' ');
+            container.innerHTML = locPlayers.length === 0 ? '<span style="color:#555;">Никого</span>' + bt :
+                '<b style="color:#aaa;">📍 ' + (LOC_COORDS[player.location]?.name||'—') + ':</b>' + bt + '<br>' +
+                locPlayers.map(p => (p.faction==='russia'?'🔴':'🔵') + ' ' + p.name + ' [' + (p.rank||'—') + '] ' + p.hp + 'HP').join('<br>');
         }
 
         function updatePlayerUI() {
             if (!player) return;
             document.getElementById('disp-name').textContent = player.name;
             document.getElementById('disp-hp').textContent = player.hp;
-            document.getElementById('disp-maxhp').textContent = player.maxHp || 100;
-            document.getElementById('disp-rank').textContent = player.rank || 'Рядовой';
+            document.getElementById('disp-rank').textContent = (player.rank||'Ряд.').substring(0,4);
             document.getElementById('disp-loc').textContent = LOC_COORDS[player.location]?.name || '—';
             if (player.supplies !== undefined) document.getElementById('disp-meds').textContent = player.supplies;
+            const pct = ((player.hp||0) / (player.maxHp||100)) * 100;
             const hpFill = document.getElementById('hp-fill');
-            const hpPercent = ((player.hp || 0) / (player.maxHp || 100)) * 100;
-            hpFill.style.width = hpPercent + '%';
-            hpFill.className = 'hp-bar-inner';
-            if (hpPercent <= 20) hpFill.classList.add('critical');
-            else if (hpPercent <= 40) hpFill.classList.add('low');
+            hpFill.style.width = pct + '%';
+            hpFill.className = 'hp-bar-inner' + (pct <= 20 ? ' critical' : pct <= 40 ? ' low' : '');
         }
 
         function updateMap() {
@@ -618,6 +641,8 @@
             let html = '';
             for (let i = 0; i < 600; i += 40) html += '<line x1="' + i + '" y1="0" x2="' + i + '" y2="500" class="map-bg-element"/>';
             for (let i = 0; i < 500; i += 40) html += '<line x1="0" y1="' + i + '" x2="600" y2="' + i + '" class="map-bg-element"/>';
+            
+            // Проверка захватов
             Object.entries(LOC_COORDS).forEach(([id, loc]) => {
                 loc.neighbors.forEach(nid => {
                     const n = LOC_COORDS[nid];
@@ -627,33 +652,46 @@
                 let cls = 'contested';
                 if (c.control === 'russia' || c.russia >= 65) cls = 'russia';
                 else if (c.control === 'ukraine' || c.ukraine >= 65) cls = 'ukraine';
+                
+                // Отслеживание захвата
+                const prev = prevControl[id];
+                if (prev && prev !== cls) {
+                    const locName = loc.name;
+                    if (cls === 'russia') showEvent('🏴 Захват!', 'Точка ' + locName + ' перешла под контроль ВС РФ!', EVENT_IMAGES[Math.floor(Math.random()*EVENT_IMAGES.length)]);
+                    else if (cls === 'ukraine') showEvent('🏴 Захват!', 'Точка ' + locName + ' перешла под контроль ВСУ!', EVENT_IMAGES[Math.floor(Math.random()*EVENT_IMAGES.length)]);
+                    else if (prev !== 'contested') showEvent('⚔️ Бои!', 'Начались ожесточённые бои за ' + locName + '!', EVENT_IMAGES[Math.floor(Math.random()*EVENT_IMAGES.length)]);
+                }
+                prevControl[id] = cls;
+                
                 const isCurrent = player && player.location === id;
-                html += '<circle class="loc-point ' + cls + (isCurrent ? ' current' : '') + '" cx="' + loc.x + '" cy="' + loc.y + '" r="15" onclick="clickOnMap(\'' + id + '\')"/>';
+                html += '<circle class="loc-point ' + cls + (isCurrent?' current':'') + '" cx="' + loc.x + '" cy="' + loc.y + '" r="15" onclick="clickOnMap(\'' + id + '\')"/>';
                 html += '<text x="' + loc.x + '" y="' + (loc.y+4) + '" class="loc-label">' + loc.name.split(' ')[0] + '</text>';
                 const locData = gameState.locations?.[id];
-                if (locData?.buildings?.length > 0) {
-                    html += '<text x="' + loc.x + '" y="' + (loc.y-14) + '" class="building-icon" text-anchor="middle">' + locData.buildings.map(b => BUILDING_EMOJI[b] || '').join('') + '</text>';
-                }
+                if (locData?.buildings?.length) html += '<text x="' + loc.x + '" y="' + (loc.y-14) + '" class="building-icon" text-anchor="middle">' + locData.buildings.map(b => BUILDING_EMOJI[b]||'').join('') + '</text>';
             });
+            
             Object.values(gameState.players).filter(p => p.alive).forEach(p => {
                 const loc = LOC_COORDS[p.location]; if (!loc) return;
                 html += '<circle cx="' + (loc.x+Math.sin(p.id.length*2.7)*12) + '" cy="' + (loc.y+Math.cos(p.id.length*2.7)*10) + '" r="4" fill="' + (p.faction==='russia'?'#ff4444':'#4488ff') + '" stroke="white" stroke-width="1" class="player-dot"><title>' + p.name + '</title></circle>';
             });
             svg.innerHTML = html;
+            
             let rus=0,ukr=0,cont=0;
             Object.values(gameState.locationControl||{}).forEach(c=>{if(c.russia>=65)rus++;else if(c.ukraine>=65)ukr++;else cont++;});
             document.getElementById('rus-total').textContent=rus;
             document.getElementById('ukr-total').textContent=ukr;
             document.getElementById('cont-total').textContent=cont;
             document.getElementById('players-online').textContent=Object.values(gameState.players).filter(p=>p.alive).length;
+            
+            updateNewsTicker();
         }
 
         function clickOnMap(locId) {
             const loc = gameState.locationControl?.[locId];
             const locData = gameState.locations?.[locId];
             const name = LOC_COORDS[locId]?.name || locId;
-            let info = '📍 ' + name + ': РФ ' + (loc?.russia||0) + '% / ВСУ ' + (loc?.ukraine||0) + '% [' + (loc?.control||'?') + ']';
-            if (locData?.buildings?.length > 0) info += ' | 🏗 ' + locData.buildings.join(', ');
+            let info = '📍 ' + name + ': РФ ' + (loc?.russia||0) + '% / ВСУ ' + (loc?.ukraine||0) + '%';
+            if (locData?.buildings?.length) info += ' | 🏗 ' + locData.buildings.join(', ');
             addMessage('system', info);
         }
 
@@ -663,16 +701,12 @@
             div.className = 'msg ' + type;
             div.textContent = text;
             box.appendChild(div);
-            const allMsgs = box.querySelectorAll('.msg');
-            if (allMsgs.length > MAX_VISIBLE_MSGS)
-                for (let i = 0; i < allMsgs.length - MAX_VISIBLE_MSGS; i++) allMsgs[i].classList.add('old');
+            const all = box.querySelectorAll('.msg');
+            if (all.length > MAX_VISIBLE_MSGS) for (let i = 0; i < all.length - MAX_VISIBLE_MSGS; i++) all[i].classList.add('old');
             box.scrollTop = box.scrollHeight;
         }
 
-        function setInputEnabled(e) {
-            document.getElementById('action-input').disabled = !e;
-            document.getElementById('btn-send').disabled = !e;
-        }
+        function setInputEnabled(e) { document.getElementById('action-input').disabled = !e; document.getElementById('btn-send').disabled = !e; }
 
         document.getElementById('action-input').addEventListener('keypress', e => { if (e.key==='Enter') sendAction(); });
         document.getElementById('faction-input').addEventListener('keypress', e => { if (e.key==='Enter') sendFactionMessage(); });
@@ -684,7 +718,7 @@
                 gameState = data;
                 updateMap();
                 updatePlayersOnLocation();
-                if (!player && savedPlayerId && data.players[savedPlayerId] && data.players[savedPlayerId].alive) {
+                if (!player && savedPlayerId && data.players[savedPlayerId]?.alive) {
                     player = data.players[savedPlayerId];
                     document.getElementById('auth-screen').classList.add('hidden');
                     document.getElementById('player-bar').classList.add('active');
@@ -695,33 +729,20 @@
                     document.getElementById('unit-flag').textContent = UNIT_EMOJI[player.faction]?.[player.unit] || '';
                     document.getElementById('disp-name').textContent = player.name;
                     document.getElementById('btn-respawn').style.display = 'none';
-                    if (player.class === 'medic') {
-                        document.getElementById('btn-heal').style.display = 'inline-block';
-                        document.getElementById('disp-supplies').style.display = 'inline';
-                    }
-                    document.getElementById('class-info').textContent = '🎖 ' + CLASS_BUFFS[player.class].name + ': ' + CLASS_BUFFS[player.class].desc;
+                    if (player.class === 'medic') { document.getElementById('btn-heal').style.display='inline-block'; document.getElementById('disp-supplies').style.display='inline'; }
+                    document.getElementById('class-info').textContent = '🎖 ' + CLASS_BUFFS[player.class].name;
                     updatePlayerUI(); updateMap(); updatePlayersOnLocation();
                     addMessage('system', '👋 С возвращением, ' + player.name + '!');
                 }
                 if (player && data.players[player.id]) {
                     const sp = data.players[player.id];
-                    if (sp.hp !== player.hp || sp.maxHp !== player.maxHp || sp.rank !== player.rank || sp.supplies !== player.supplies) {
-                        Object.assign(player, sp);
-                        updatePlayerUI();
-                    }
-                    if (!sp.alive && player.alive) {
-                        player.alive = false;
-                        addMessage('kill', '💀 Ты погиб!');
-                        handleDeath();
-                    }
+                    if (sp.hp !== player.hp || sp.maxHp !== player.maxHp || sp.rank !== player.rank || sp.supplies !== player.supplies) { Object.assign(player, sp); updatePlayerUI(); }
+                    if (!sp.alive && player.alive) { player.alive = false; addMessage('kill', '💀 Ты погиб!'); handleDeath(); }
                 }
             } catch (e) {}
         }
         setInterval(pollState, 8000);
-
-        document.getElementById('move-modal').addEventListener('click', function(e) {
-            if (e.target === this) this.style.display = 'none';
-        });
+        document.getElementById('move-modal').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
 
         addMessage('system', '⚔️ WarZone RP 3.0 готов. Выбери сторону!');
         pollState();
