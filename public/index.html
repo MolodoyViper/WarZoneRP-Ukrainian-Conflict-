@@ -17,22 +17,10 @@
             overflow: hidden; touch-action: manipulation;
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
         }
-
-        #news-ticker {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 3000;
-            background: rgba(0,0,0,0.9); border-bottom: 1px solid var(--border);
-            padding: 3px 0; overflow: hidden; white-space: nowrap; 
-            font-size: 0.65rem; color: #ddd; height: 20px; line-height: 14px;
-        }
+        #news-ticker { position: fixed; top: 0; left: 0; right: 0; z-index: 3000; background: rgba(0,0,0,0.9); border-bottom: 1px solid var(--border); padding: 3px 0; overflow: hidden; white-space: nowrap; font-size: 0.65rem; color: #ddd; height: 20px; line-height: 14px; }
         #news-ticker span { display: inline-block; padding-left: 100%; animation: ticker 60s linear infinite; }
         @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
-
-        #app { 
-            display: grid; grid-template-columns: 1fr 1.2fr; 
-            height: calc(100vh - 20px); margin-top: 20px;
-            height: calc(100dvh - 20px);
-        }
-
+        #app { display: grid; grid-template-columns: 1fr 1.2fr; height: calc(100vh - 20px); margin-top: 20px; height: calc(100dvh - 20px); }
         #map-panel { position: relative; overflow: hidden; border-right: 2px solid var(--border); background: #0d1a0d; }
         #map-svg { width: 100%; height: 100%; transition: transform 0.1s; transform-origin: center; }
         .map-bg-element { stroke: #1a3a1a; stroke-width: 0.5; fill: none; }
@@ -75,7 +63,7 @@
         #player-bar { display: none; padding: 3px 6px; background: #0c0c16; border-bottom: 1px solid var(--border); font-size: 0.58rem; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2px; flex-shrink: 0; }
         #player-bar.active { display: flex; }
         #disp-name { cursor: pointer; text-decoration: underline; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        #disp-rank { max-width: 50px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #disp-rank { max-width: 55px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .hp-bar-outer { width: 40px; height: 3px; background: #222; border-radius: 2px; overflow: hidden; }
         .hp-bar-inner { height: 100%; background: #4a4; transition: width 0.4s; }
         .hp-bar-inner.low { background: #a44; } .hp-bar-inner.critical { background: #a22; animation: blink 0.5s infinite; }
@@ -86,14 +74,8 @@
         .tab-btn { padding: 2px 6px; background: #1a1a28; border: 1px solid #333; color: #888; border-radius: 6px; font-size: 0.55rem; cursor: pointer; }
         .tab-btn.active { background: #2a2a38; color: #fff; border-color: var(--gold); }
 
-        /* ФИКС ЧАТА - строгие размеры */
         #chat-container { flex: 1; position: relative; overflow: hidden; min-height: 0; }
-        #messages-box, #faction-chat-box { 
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
-            overflow-y: auto; padding: 4px; 
-            display: flex; flex-direction: column; gap: 2px; 
-            -webkit-overflow-scrolling: touch;
-        }
+        #messages-box, #faction-chat-box { position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow-y: auto; padding: 4px; display: flex; flex-direction: column; gap: 2px; -webkit-overflow-scrolling: touch; }
         #messages-box.hidden, #faction-chat-box:not(.active) { display: none; }
 
         .msg { padding: 3px 6px; border-radius: 4px; max-width: 85%; font-size: 0.6rem; line-height: 1.2; animation: msgIn 0.2s; word-break: break-word; }
@@ -105,14 +87,13 @@
         .msg.kill { background: #1a1010; border: 1px solid #4a2020; color: #d08080; align-self: center; text-align: center; }
         .msg.control { background: #101a10; border: 1px solid #2a4a2a; color: #80c080; align-self: center; text-align: center; }
         .msg.faction { background: #1a1a20; border-left: 2px solid #6666aa; align-self: flex-start; font-size: 0.55rem; }
+        .msg.loot { background: #1a1a10; border: 1px solid #4a4a20; color: #d0d080; align-self: center; text-align: center; }
         .msg.old { opacity: 0.3; }
 
         #input-area { padding: 4px 6px; border-top: 2px solid var(--border); display: flex; gap: 4px; background: #0e0e16; flex-shrink: 0; }
         #action-input, #faction-input { flex: 1; padding: 5px 8px; background: #1a1a24; border: 1px solid #333; color: #fff; border-radius: 12px; font-size: 0.6rem; min-width: 0; }
-        #action-input:disabled { opacity: 0.4; }
-        #action-input.hidden { display: none; }
-        #faction-input { display: none; }
-        #faction-input.active { display: block; }
+        #action-input:disabled { opacity: 0.4; } #action-input.hidden { display: none; }
+        #faction-input { display: none; } #faction-input.active { display: block; }
         .btn-send { width: 28px; height: 28px; border-radius: 50%; background: var(--gold); color: #000; border: none; font-size: 0.7rem; cursor: pointer; flex-shrink: 0; }
         .btn-send:disabled { background: #333; color: #666; }
 
@@ -124,68 +105,41 @@
 
         #music-btn { position: fixed; bottom: 80px; right: 8px; z-index: 500; width: 30px; height: 30px; border-radius: 50%; background: rgba(0,0,0,0.85); border: 1px solid var(--border); color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        #event-popup {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 2500; display: none; text-align: center;
-            background: rgba(0,0,0,0.95); border: 2px solid var(--gold);
-            border-radius: 12px; padding: 20px; max-width: 320px; width: 90%;
-            box-shadow: 0 0 50px rgba(200,168,64,0.4); animation: popIn 0.4s ease;
-        }
+        #event-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2500; display: none; text-align: center; background: rgba(0,0,0,0.95); border: 2px solid var(--gold); border-radius: 12px; padding: 20px; max-width: 320px; width: 90%; box-shadow: 0 0 50px rgba(200,168,64,0.4); animation: popIn 0.4s ease; }
         @keyframes popIn { 0%{transform:translate(-50%,-50%) scale(0.5);opacity:0} 100%{transform:translate(-50%,-50%) scale(1);opacity:1} }
         #event-emoji { font-size: 3rem; margin-bottom: 6px; }
         #event-title { color: var(--gold); font-size: 1rem; font-weight: bold; margin-bottom: 4px; }
         #event-text { color: #ccc; font-size: 0.7rem; margin-bottom: 10px; }
         #event-close { padding: 6px 20px; background: var(--gold); color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 0.7rem; }
 
-        /* Инвентарь - исправлен */
-        #inventory-modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 2100; background: #12121c; border: 2px solid var(--gold); border-radius: 10px;
-            padding: 14px; max-width: 380px; width: 95%; box-shadow: 0 0 40px rgba(0,0,0,0.9);
-        }
+        /* Инвентарь */
+        #inventory-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2100; background: #12121c; border: 2px solid var(--gold); border-radius: 10px; padding: 14px; max-width: 380px; width: 95%; box-shadow: 0 0 40px rgba(0,0,0,0.9); }
         #inventory-modal h3 { color: var(--gold); text-align: center; margin-bottom: 8px; font-size: 0.8rem; }
         .inv-layout { display: flex; gap: 8px; align-items: flex-start; justify-content: center; }
         .inv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; flex: 1; max-width: 200px; }
-        .inv-slot { 
-            aspect-ratio: 1; background: #1a1a28; border: 1px solid #333; border-radius: 3px; 
-            display: flex; align-items: center; justify-content: center; font-size: 1rem; 
-            cursor: pointer; position: relative; transition: all 0.2s; min-width: 35px; 
-        }
+        .inv-slot { aspect-ratio: 1; background: #1a1a28; border: 1px solid #333; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; position: relative; transition: all 0.2s; min-width: 35px; }
         .inv-slot:hover { border-color: var(--gold); background: #222238; }
-        .inv-slot .item-count { position: absolute; bottom: 1px; right: 3px; font-size: 0.5rem; color: #fff; font-weight: bold; }
+        .inv-slot.crate { border-color: #8a6a20 !important; animation: crateGlow 1.5s infinite; }
+        @keyframes crateGlow { 0%,100%{box-shadow:0 0 4px rgba(200,160,40,0.3)} 50%{box-shadow:0 0 12px rgba(200,160,40,0.7)} }
         .inv-equipment { display: flex; flex-direction: column; gap: 3px; width: 45px; }
-        .inv-equip-slot { 
-            aspect-ratio: 1; background: #1a1a28; border: 2px solid #2a2a3a; border-radius: 4px; 
-            display: flex; align-items: center; justify-content: center; font-size: 1.2rem; 
-            cursor: pointer; transition: all 0.2s; 
-        }
+        .inv-equip-slot { aspect-ratio: 1; background: #1a1a28; border: 2px solid #2a2a3a; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; }
         .inv-equip-slot:hover { border-color: var(--gold); }
         .inv-equip-slot.equipped { border-color: #4a4 !important; box-shadow: 0 0 6px rgba(100,200,100,0.3); }
-        .inv-mannequin { 
-            text-align: center; font-size: 0.45rem; color: #888; line-height: 1; 
-            display: flex; flex-direction: column; gap: 3px; width: 35px; 
-        }
+        .inv-mannequin { text-align: center; font-size: 0.45rem; color: #888; line-height: 1; display: flex; flex-direction: column; gap: 3px; width: 35px; }
         .inv-mannequin span { font-size: 1.5rem; display: block; }
+        #sell-slot { border: 2px dashed #4a2020 !important; display: flex; align-items: center; justify-content: center; color: #a44; font-size: 0.6rem; cursor: pointer; margin-top: 6px; padding: 8px; border-radius: 4px; }
+        #sell-slot:hover { border-color: #a44 !important; background: #2a1a1a; }
 
         @media (max-width: 768px) {
             #app { grid-template-columns: 1fr; grid-template-rows: 35vh 1fr; }
             #map-panel { border-right: none; border-bottom: 2px solid var(--border); }
             #inventory-modal { max-width: 95%; padding: 10px; }
-            .inv-layout { gap: 5px; }
-            .inv-equipment { width: 38px; }
-            .inv-mannequin { width: 30px; }
         }
     </style>
 </head>
 <body>
     <div id="news-ticker"><span id="news-text">⚔️ Загрузка сводок...</span></div>
-
-    <div id="event-popup">
-        <div id="event-emoji">🏴</div>
-        <div id="event-title"></div>
-        <div id="event-text"></div>
-        <button id="event-close" onclick="closeEvent()">Понятно</button>
-    </div>
+    <div id="event-popup"><div id="event-emoji">🏴</div><div id="event-title"></div><div id="event-text"></div><button id="event-close" onclick="closeEvent()">Понятно</button></div>
 
     <div id="app">
         <div id="map-panel">
@@ -225,12 +179,12 @@
             </div>
 
             <div id="player-bar">
-                <span id="unit-flag"></span>
-                <b id="disp-name" onclick="showProfile()">—</b>
+                <span id="unit-flag"></span><b id="disp-name" onclick="showProfile()">—</b>
                 <span id="disp-rank">Рядовой</span>
                 <span>📍<span id="disp-loc">—</span></span>
                 <span>❤️<span id="disp-hp">100</span></span>
                 <span id="disp-supplies" style="display:none;">💊<span id="disp-meds">0</span></span>
+                <span>⭐<span id="disp-xp">0</span></span>
                 <div class="hp-bar-outer"><div class="hp-bar-inner" id="hp-fill" style="width:100%"></div></div>
                 <button class="quick-btn" onclick="getCommanderOrder()">📻</button>
             </div>
@@ -268,8 +222,7 @@
     <div id="profile-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;">
         <div style="background:#1a1a24;border:1px solid #333;border-radius:10px;padding:16px;max-width:300px;width:90%;text-align:center;">
             <div id="profile-avatar" style="width:60px;height:60px;border-radius:50%;background:#222;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:30px;cursor:pointer;overflow:hidden;border:2px solid var(--gold);">
-                <span id="profile-avatar-text">🪖</span>
-                <img id="profile-avatar-img" style="display:none;width:100%;height:100%;object-fit:cover;">
+                <span id="profile-avatar-text">🪖</span><img id="profile-avatar-img" style="display:none;width:100%;height:100%;object-fit:cover;">
             </div>
             <input type="file" id="avatar-upload" accept="image/*" style="display:none;">
             <p style="font-size:0.5rem;color:#888;margin-bottom:4px;">Нажми на иконку для аватара</p>
@@ -279,7 +232,7 @@
             <p id="profile-unit" style="color:#ccc;margin-bottom:1px;font-size:0.7rem;">—</p>
             <p id="profile-hp" style="color:#4a4;margin-bottom:1px;font-size:0.7rem;">—</p>
             <p id="profile-kills" style="color:#c44;margin-bottom:1px;font-size:0.7rem;">—</p>
-            <p id="profile-deaths" style="color:#888;margin-bottom:6px;font-size:0.7rem;">—</p>
+            <p id="profile-xp" style="color:#ca4;margin-bottom:6px;font-size:0.7rem;">—</p>
             <button onclick="showInventory()" style="padding:5px 12px;background:#2a3a4a;color:#8ac;border:1px solid #4a6a8a;border-radius:4px;cursor:pointer;font-size:0.65rem;margin-right:5px;">🎒 Инвентарь</button>
             <button onclick="document.getElementById('profile-modal').style.display='none'" style="padding:5px 12px;background:var(--gold);color:#000;border:none;border-radius:4px;cursor:pointer;font-weight:bold;font-size:0.65rem;">Закрыть</button>
         </div>
@@ -287,7 +240,7 @@
 
     <!-- Инвентарь -->
     <div id="inventory-modal">
-        <h3>🎒 Инвентарь</h3>
+        <h3>🎒 Инвентарь (нажми на предмет → экипировать, на ящик → открыть)</h3>
         <div class="inv-layout">
             <div class="inv-grid" id="inv-grid"></div>
             <div class="inv-equipment">
@@ -296,17 +249,12 @@
                 <div class="inv-equip-slot" id="equip-armor" title="Броня" onclick="unequipItem('armor')">🛡️</div>
                 <div class="inv-equip-slot" id="equip-boots" title="Обувь" onclick="unequipItem('boots')">👢</div>
             </div>
-            <div class="inv-mannequin">
-                <span>🪖</span>Шлем
-                <span>🔫</span>Оруж
-                <span>🛡️</span>Броня
-                <span>👢</span>Обувь
-            </div>
+            <div class="inv-mannequin"><span>🪖</span>Шлем<span>🔫</span>Оруж<span>🛡️</span>Броня<span>👢</span>Обувь</div>
         </div>
-        <button onclick="document.getElementById('inventory-modal').style.display='none'" style="margin-top:8px;padding:5px 16px;background:var(--gold);color:#000;border:none;border-radius:4px;cursor:pointer;width:100%;font-weight:bold;font-size:0.65rem;">Закрыть</button>
+        <div id="sell-slot" onclick="sellMode = !sellMode; this.style.borderColor = sellMode ? '#a44' : '#4a2020'; this.textContent = sellMode ? '🗑️ Режим продажи ВКЛ (нажми на предмет)' : '🗑️ Продать предмет (нажми для вкл)'">🗑️ Продать предмет (нажми для вкл)</div>
+        <button onclick="document.getElementById('inventory-modal').style.display='none'" style="margin-top:6px;padding:5px 16px;background:var(--gold);color:#000;border:none;border-radius:4px;cursor:pointer;width:100%;font-weight:bold;font-size:0.65rem;">Закрыть</button>
     </div>
 
-    <!-- Перемещение -->
     <div id="move-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center;">
         <div style="background:#1a1a24;border:1px solid #333;border-radius:8px;padding:12px;max-width:320px;width:90%;max-height:65vh;overflow-y:auto;">
             <h3 style="color:var(--gold);margin-bottom:8px;font-size:0.8rem;">🚶 Переместиться</h3>
@@ -316,29 +264,18 @@
     </div>
 
     <button id="music-btn" onclick="toggleMusic()">🔇</button>
-    <audio id="bg-music" loop style="display:none;" preload="auto">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bg-music" loop style="display:none;" preload="auto"><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg"></audio>
 
     <script>
         let player = null, selectedFaction = null, selectedUnit = null;
         let gameState = { locations: {}, players: {}, locationControl: {} };
         const MAX_VISIBLE_MSGS = 40;
         let savedPlayerId = localStorage.getItem('warzone_playerId');
-        let currentTab = 'game', musicPlaying = false;
+        let currentTab = 'game', musicPlaying = false, sellMode = false;
         let prevControl = {};
 
-        const UNIT_EMOJI = {
-            russia: { somali: '🦂', pyatnashka: '1️⃣5️⃣', sparta: '⚔️', wolves: '🐺' },
-            ukraine: { azov: '🔱', aidar: '⚔️', kraken: '🐙', ghost: '💀' }
-        };
-        const CLASS_BUFFS = {
-            rifleman: { name: 'Стрелок', buff: 'survivability', desc: 'Выживаемость +15%' },
-            sniper: { name: 'Снайпер', buff: 'accuracy', desc: 'Точность +20%' },
-            medic: { name: 'Медик', buff: 'heal', desc: 'Лечение союзников' },
-            engineer: { name: 'Инженер', buff: 'sabotage', desc: 'Укрепления +15%' },
-            commander: { name: 'Командир', buff: 'morale', desc: 'Мораль +10%' }
-        };
+        const UNIT_EMOJI = { russia: { somali: '🦂', pyatnashka: '1️⃣5️⃣', sparta: '⚔️', wolves: '🐺' }, ukraine: { azov: '🔱', aidar: '⚔️', kraken: '🐙', ghost: '💀' } };
+        const CLASS_BUFFS = { rifleman: { name: 'Стрелок', buff: 'survivability', desc: 'Выживаемость +15%' }, sniper: { name: 'Снайпер', buff: 'accuracy', desc: 'Точность +20%' }, medic: { name: 'Медик', buff: 'heal', desc: 'Лечение' }, engineer: { name: 'Инженер', buff: 'sabotage', desc: 'Укрепления +15%' }, commander: { name: 'Командир', buff: 'morale', desc: 'Мораль +10%' } };
         const BUILDING_EMOJI = { base: '🏰', checkpoint: '🛂', warehouse: '📦', hospital: '🏥', barrack: '🛏️' };
 
         const LOC_COORDS = {
@@ -359,76 +296,23 @@
             kupiansk: { x: 460, y: 190, name: 'Купянск', neighbors: ['kharkiv','izyum'] }
         };
 
-        let playerInventory = { items: Array(16).fill(null), equipment: { helmet: null, weapon: null, armor: null, boots: null } };
-
-        function initInventory() {
-            const saved = localStorage.getItem('warzone_inv_' + (player?.id || ''));
-            if (saved) { try { playerInventory = JSON.parse(saved); } catch(e) { playerInventory = { items: Array(16).fill(null), equipment: { helmet: null, weapon: null, armor: null, boots: null } }; } }
-            else playerInventory = { items: Array(16).fill(null), equipment: { helmet: null, weapon: null, armor: null, boots: null } };
-        }
-
-        function saveInventory() { if (player) localStorage.setItem('warzone_inv_' + player.id, JSON.stringify(playerInventory)); }
-
-        function renderInventory() {
-            const grid = document.getElementById('inv-grid');
-            grid.innerHTML = '';
-            for (let i = 0; i < 16; i++) {
-                const item = playerInventory.items[i];
-                const slot = document.createElement('div');
-                slot.className = 'inv-slot';
-                slot.innerHTML = item ? item.emoji + '<span class="item-count">' + (item.count||1) + '</span>' : '';
-                slot.onclick = () => useInventoryItem(i);
-                grid.appendChild(slot);
-            }
-            ['helmet','weapon','armor','boots'].forEach(slot => {
-                const el = document.getElementById('equip-' + slot);
-                const item = playerInventory.equipment[slot];
-                if (item) { el.textContent = item.emoji; el.classList.add('equipped'); }
-                else { el.textContent = slot === 'helmet' ? '🪖' : slot === 'weapon' ? '🔫' : slot === 'armor' ? '🛡️' : '👢'; el.classList.remove('equipped'); }
-            });
-        }
-
-        function useInventoryItem(index) {
-            const item = playerInventory.items[index];
-            if (!item) return;
-            if (item.slot) {
-                const old = playerInventory.equipment[item.slot];
-                playerInventory.equipment[item.slot] = item;
-                playerInventory.items[index] = old;
-            }
-            saveInventory(); renderInventory();
-            addMessage('system', '🎒 ' + (item.name || 'Предмет') + ' экипирован!');
-        }
-
-        function unequipItem(slot) {
-            const item = playerInventory.equipment[slot];
-            if (!item) return;
-            const freeSlot = playerInventory.items.findIndex(i => i === null);
-            if (freeSlot >= 0) {
-                playerInventory.items[freeSlot] = item;
-                playerInventory.equipment[slot] = null;
-                saveInventory(); renderInventory();
-                addMessage('system', '🎒 Предмет снят.');
-            }
-        }
-
-        function addItemToInventory(emoji, name, slot, count = 1) {
-            initInventory();
-            const existing = playerInventory.items.findIndex(i => i && i.name === name && !i.slot);
-            if (existing >= 0 && count === 1) {
-                playerInventory.items[existing].count = (playerInventory.items[existing].count || 1) + 1;
-            } else {
-                const freeSlot = playerInventory.items.findIndex(i => i === null);
-                if (freeSlot >= 0) playerInventory.items[freeSlot] = { emoji, name, slot, count };
-            }
-            saveInventory();
-        }
-
-        function showInventory() {
-            document.getElementById('profile-modal').style.display = 'none';
-            initInventory(); renderInventory();
-            document.getElementById('inventory-modal').style.display = 'block';
-        }
+        const ITEMS_DB = {
+            steel_helmet: { name: 'Стальной шлем', emoji: '🪖', slot: 'helmet', rarity: 'обычный' },
+            tactical_helmet: { name: 'Тактический шлем', emoji: '⛑️', slot: 'helmet', rarity: 'необычный' },
+            night_vision: { name: 'ПНВ', emoji: '👁️', slot: 'helmet', rarity: 'редкий' },
+            light_vest: { name: 'Лёгкий броник', emoji: '🦺', slot: 'armor', rarity: 'обычный' },
+            heavy_vest: { name: 'Тяжёлый броник', emoji: '🛡️', slot: 'armor', rarity: 'необычный' },
+            plate_carrier: { name: 'Плитник', emoji: '🗿', slot: 'armor', rarity: 'редкий' },
+            ak74: { name: 'АК-74', emoji: '🔫', slot: 'weapon', rarity: 'обычный' },
+            m4a1: { name: 'M4A1', emoji: '🎯', slot: 'weapon', rarity: 'необычный' },
+            svd: { name: 'СВД', emoji: '🔭', slot: 'weapon', rarity: 'редкий' },
+            boots_standard: { name: 'Берцы', emoji: '👢', slot: 'boots', rarity: 'обычный' },
+            boots_tactical: { name: 'Тактические ботинки', emoji: '🥾', slot: 'boots', rarity: 'необычный' },
+            boots_elite: { name: 'Элитные берцы', emoji: '👟', slot: 'boots', rarity: 'редкий' },
+            grenade: { name: 'Граната', emoji: '💣', slot: null, rarity: 'обычный' },
+            medkit: { name: 'Аптечка', emoji: '🩹', slot: null, rarity: 'обычный' },
+            crate: { name: 'Ящик с припасами', emoji: '📦', slot: null, rarity: 'ящик' }
+        };
 
         function selectFaction(faction) {
             selectedFaction = faction; selectedUnit = null;
@@ -471,7 +355,6 @@
                 const data = await resp.json();
                 player = data.player;
                 localStorage.setItem('warzone_playerId', player.id);
-                initInventory();
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('player-bar').classList.add('active');
                 document.getElementById('tab-bar').classList.add('active');
@@ -497,8 +380,6 @@
                 const data = await resp.json();
                 player = data.player;
                 localStorage.setItem('warzone_playerId', player.id);
-                playerInventory = { items: Array(16).fill(null), equipment: { helmet: null, weapon: null, armor: null, boots: null } };
-                saveInventory();
                 document.getElementById('btn-respawn').style.display = 'none';
                 document.getElementById('action-input').disabled = false;
                 document.getElementById('btn-send').disabled = false;
@@ -524,34 +405,20 @@
                     const m = data.gameUpdate.systemMessage;
                     if (m.includes('💀')) addMessage('kill', m);
                     else if (m.includes('захват') || m.includes('🏴')) addMessage('control', m);
+                    else if (m.includes('📦')) addMessage('loot', m);
                     else addMessage('system', m);
                 }
                 if (data.gameUpdate?.playerChanges) {
-                    const oldRank = player.rank;
                     Object.assign(player, data.gameUpdate.playerChanges);
                     if (player.supplies !== undefined) document.getElementById('disp-meds').textContent = player.supplies;
                     if (player.alive === false) handleDeath();
-                    if (player.rank !== oldRank && player.rank !== 'Рядовой') {
-                        const loot = getRandomLoot();
-                        addItemToInventory(loot.emoji, loot.name, loot.slot);
-                        addMessage('system', '📦 Повышение! Получен: ' + loot.name);
-                    }
+                }
+                if (data.gameUpdate?.crateAwarded) {
+                    addMessage('loot', '📦 Получен ящик за захват точки! Открой в инвентаре.');
                 }
                 updatePlayerUI(); updateMap(); updatePlayersOnLocation();
             } catch (e) { addMessage('system', '⚡ Связь потеряна'); }
             setInputEnabled(true);
-        }
-
-        function getRandomLoot() {
-            const loots = [
-                { emoji: '⛑️', name: 'Каска', slot: 'helmet' },
-                { emoji: '🛡️', name: 'Бронежилет', slot: 'armor' },
-                { emoji: '🔫', name: 'Автомат', slot: 'weapon' },
-                { emoji: '👢', name: 'Берцы', slot: 'boots' },
-                { emoji: '💣', name: 'Граната', slot: null },
-                { emoji: '🩹', name: 'Аптечка', slot: null },
-            ];
-            return loots[Math.floor(Math.random() * loots.length)];
         }
 
         async function sendFactionMessage() {
@@ -570,8 +437,7 @@
                 const box = document.getElementById('faction-chat-box');
                 box.innerHTML = '';
                 (data.chat || []).forEach(msg => {
-                    const div = document.createElement('div');
-                    div.className = 'msg faction';
+                    const div = document.createElement('div'); div.className = 'msg faction';
                     div.textContent = (msg.unit||'') + ' ' + msg.playerName + ': ' + msg.message;
                     box.appendChild(div);
                 });
@@ -594,7 +460,7 @@
             const neighbors = LOC_COORDS[player.location]?.neighbors || [];
             const container = document.getElementById('move-options');
             container.innerHTML = '';
-            if (!neighbors.length) { container.innerHTML = '<p style="color:#888;font-size:0.65rem;">Нет доступных точек.</p>'; }
+            if (!neighbors.length) { container.innerHTML = '<p style="color:#888;font-size:0.65rem;">Нет точек.</p>'; }
             neighbors.forEach(locId => {
                 const loc = gameState.locationControl?.[locId]; if (!loc) return;
                 const locName = LOC_COORDS[locId]?.name || locId;
@@ -632,11 +498,7 @@
 
         async function getCommanderOrder() {
             if (!player) return;
-            try {
-                const resp = await fetch('/api/commander/' + player.id);
-                const data = await resp.json();
-                addMessage('commander', '📻 ' + data.commanderName + ' ' + data.unitEmblem + ': ' + data.order);
-            } catch (e) {}
+            try { const r = await fetch('/api/commander/' + player.id); const d = await r.json(); addMessage('commander', '📻 ' + d.commanderName + ' ' + d.unitEmblem + ': ' + d.order); } catch (e) {}
         }
 
         function showProfile() {
@@ -647,31 +509,121 @@
             document.getElementById('profile-unit').textContent = 'Подразделение: ' + (UNIT_EMOJI[player.faction]?.[player.unit]||'') + ' ' + (player.unit||'—');
             document.getElementById('profile-hp').textContent = 'HP: ' + (player.hp||0) + '/' + (player.maxHp||100);
             document.getElementById('profile-kills').textContent = 'Убийств: ' + (player.kills||0);
-            document.getElementById('profile-deaths').textContent = 'Смертей: ' + (player.deaths||0);
-            const savedAvatar = localStorage.getItem('warzone_avatar_' + player.id);
-            if (savedAvatar) { document.getElementById('profile-avatar-img').src = savedAvatar; document.getElementById('profile-avatar-img').style.display='block'; document.getElementById('profile-avatar-text').style.display='none'; }
+            document.getElementById('profile-xp').textContent = 'XP: ' + (player.xp||0);
+            const a = localStorage.getItem('warzone_avatar_' + player.id);
+            if (a) { document.getElementById('profile-avatar-img').src = a; document.getElementById('profile-avatar-img').style.display='block'; document.getElementById('profile-avatar-text').style.display='none'; }
             else { document.getElementById('profile-avatar-img').style.display='none'; document.getElementById('profile-avatar-text').style.display='block'; document.getElementById('profile-avatar-text').textContent = player.faction==='russia'?'🔴':'🔵'; }
             document.getElementById('profile-modal').style.display = 'flex';
         }
 
         document.getElementById('profile-avatar').addEventListener('click', ()=>document.getElementById('avatar-upload').click());
         document.getElementById('avatar-upload').addEventListener('change', function(e) {
-            const file = e.target.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(ev) { document.getElementById('profile-avatar-img').src = ev.target.result; document.getElementById('profile-avatar-img').style.display='block'; document.getElementById('profile-avatar-text').style.display='none'; localStorage.setItem('warzone_avatar_'+player.id, ev.target.result); };
-            reader.readAsDataURL(file);
+            const f = e.target.files[0]; if (!f) return;
+            const r = new FileReader();
+            r.onload = function(ev) { document.getElementById('profile-avatar-img').src = ev.target.result; document.getElementById('profile-avatar-img').style.display='block'; document.getElementById('profile-avatar-text').style.display='none'; localStorage.setItem('warzone_avatar_'+player.id, ev.target.result); };
+            r.readAsDataURL(f);
         });
-
         document.getElementById('profile-modal').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
         document.getElementById('inventory-modal').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
 
-        function toggleMusic() {
-            const audio = document.getElementById('bg-music'), btn = document.getElementById('music-btn');
-            if (musicPlaying) { audio.pause(); btn.textContent='🔇'; musicPlaying=false; }
-            else { audio.volume=0.1; audio.play().then(()=>{btn.textContent='🔊';musicPlaying=true;}).catch(()=>addMessage('system','🔇 Не удалось')); }
+        function showInventory() {
+            document.getElementById('profile-modal').style.display = 'none';
+            renderInventory();
+            document.getElementById('inventory-modal').style.display = 'block';
         }
 
-        // Зум карты
+        function renderInventory() {
+            const grid = document.getElementById('inv-grid');
+            grid.innerHTML = '';
+            const inv = player.inventory;
+            if (!inv) return;
+            for (let i = 0; i < 16; i++) {
+                const itemId = inv.items[i];
+                const slot = document.createElement('div');
+                slot.className = 'inv-slot';
+                if (itemId && ITEMS_DB[itemId]) {
+                    const item = ITEMS_DB[itemId];
+                    slot.innerHTML = item.emoji;
+                    slot.title = item.name + ' (' + item.rarity + ')';
+                    if (itemId === 'crate') slot.classList.add('crate');
+                    slot.onclick = () => clickInventoryItem(i, itemId);
+                }
+                grid.appendChild(slot);
+            }
+            ['helmet','weapon','armor','boots'].forEach(s => {
+                const el = document.getElementById('equip-' + s);
+                const itemId = inv.equipment[s];
+                if (itemId && ITEMS_DB[itemId]) { el.textContent = ITEMS_DB[itemId].emoji; el.classList.add('equipped'); }
+                else { el.textContent = s==='helmet'?'🪖':s==='weapon'?'🔫':s==='armor'?'🛡️':'👢'; el.classList.remove('equipped'); }
+            });
+        }
+
+        async function clickInventoryItem(index, itemId) {
+            if (!player) return;
+            if (sellMode) {
+                try {
+                    const r = await fetch('/api/sell-item', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId: player.id, itemIndex: index }) });
+                    const d = await r.json();
+                    if (d.success) {
+                        player.inventory.items[index] = null;
+                        player.xp = (player.xp||0) + d.xpGain;
+                        addMessage('loot', d.message);
+                        renderInventory();
+                        updatePlayerUI();
+                    } else addMessage('system', d.error || 'Ошибка');
+                } catch (e) {}
+                return;
+            }
+            if (itemId === 'crate') {
+                try {
+                    const r = await fetch('/api/open-crate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId: player.id }) });
+                    const d = await r.json();
+                    if (d.success) {
+                        player.inventory.items[index] = d.item.id;
+                        addMessage('loot', d.message);
+                        renderInventory();
+                    } else addMessage('system', d.error || 'Ошибка');
+                } catch (e) {}
+                return;
+            }
+            if (ITEMS_DB[itemId] && ITEMS_DB[itemId].slot) {
+                try {
+                    const r = await fetch('/api/equip-item', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId: player.id, itemIndex: index }) });
+                    const d = await r.json();
+                    if (d.success) {
+                        player.inventory = { items: player.inventory.items, equipment: player.inventory.equipment };
+                        player.inventory.items[index] = player.inventory.equipment[d.equipped.slot];
+                        player.inventory.equipment[d.equipped.slot] = d.equipped.item.id;
+                        addMessage('system', d.message);
+                        renderInventory();
+                    } else addMessage('system', d.error || 'Ошибка');
+                } catch (e) {}
+            }
+        }
+
+        async function unequipItem(slot) {
+            if (!player) return;
+            try {
+                const r = await fetch('/api/unequip-item', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId: player.id, slot }) });
+                const d = await r.json();
+                if (d.success) {
+                    const freeIndex = player.inventory.items.findIndex(i => i === null);
+                    if (freeIndex >= 0) {
+                        player.inventory.items[freeIndex] = player.inventory.equipment[slot];
+                        player.inventory.equipment[slot] = null;
+                    }
+                    addMessage('system', d.message);
+                    renderInventory();
+                } else addMessage('system', d.error || 'Ошибка');
+            } catch (e) {}
+        }
+
+        function toggleMusic() {
+            const a = document.getElementById('bg-music'), b = document.getElementById('music-btn');
+            if (musicPlaying) { a.pause(); b.textContent='🔇'; musicPlaying=false; }
+            else { a.volume=0.1; a.play().then(()=>{b.textContent='🔊';musicPlaying=true;}).catch(()=>addMessage('system','🔇 Не удалось')); }
+        }
+
         let mapZoom = 1, mapPanX = 0, mapPanY = 0;
         const mapSvg = document.getElementById('map-svg'), mapPanel = document.getElementById('map-panel');
         mapPanel.addEventListener('wheel', function(e) { e.preventDefault(); mapZoom = Math.min(2.5, Math.max(0.5, mapZoom + (e.deltaY>0?-0.1:0.1))); applyMap(); });
@@ -720,6 +672,7 @@
             document.getElementById('disp-hp').textContent = player.hp;
             document.getElementById('disp-rank').textContent = player.rank || 'Рядовой';
             document.getElementById('disp-loc').textContent = LOC_COORDS[player.location]?.name || '—';
+            document.getElementById('disp-xp').textContent = player.xp || 0;
             if (player.supplies !== undefined) document.getElementById('disp-meds').textContent = player.supplies;
             const pct = ((player.hp||0)/(player.maxHp||100))*100;
             const hpFill = document.getElementById('hp-fill');
@@ -796,7 +749,6 @@
                 updatePlayersOnLocation();
                 if (!player && savedPlayerId && data.players[savedPlayerId]?.alive) {
                     player = data.players[savedPlayerId];
-                    initInventory();
                     document.getElementById('auth-screen').classList.add('hidden');
                     document.getElementById('player-bar').classList.add('active');
                     document.getElementById('tab-bar').classList.add('active');
@@ -813,7 +765,7 @@
                 }
                 if (player && data.players[player.id]) {
                     const sp = data.players[player.id];
-                    if (sp.hp!==player.hp||sp.maxHp!==player.maxHp||sp.rank!==player.rank||sp.supplies!==player.supplies){Object.assign(player,sp);updatePlayerUI();}
+                    if (sp.hp!==player.hp||sp.maxHp!==player.maxHp||sp.rank!==player.rank||sp.supplies!==player.supplies||sp.xp!==player.xp){Object.assign(player,sp);updatePlayerUI();}
                     if (!sp.alive && player.alive){player.alive=false;addMessage('kill','💀 Ты погиб!');handleDeath();}
                 }
             } catch(e){}
@@ -821,7 +773,7 @@
         setInterval(pollState, 8000);
         document.getElementById('move-modal').addEventListener('click', function(e){if(e.target===this)this.style.display='none';});
 
-        addMessage('system', '⚔️ WarZone RP готов. Выбери сторону!');
+        addMessage('system', '⚔️ WarZone RP 3.0 готов. Выбери сторону!');
         pollState();
     </script>
 </body>
