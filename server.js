@@ -356,14 +356,17 @@ app.post('/api/action', async (req, res) => {
             else if (loc.ukrPower >= 70) loc.control = 'ukraine';
             else loc.control = 'contested';
             
-            // Ящик за захват точки
-            let crateAwarded = false;
-            if (oldControl !== loc.control && loc.control === player.faction && player.faction === 'russia' && oldControl !== 'russia') {
-                crateAwarded = true;
-            }
-            if (oldControl !== loc.control && loc.control === player.faction && player.faction === 'ukraine' && oldControl !== 'ukraine') {
-                crateAwarded = true;
-            }
+            // Ящик за захват точки (ЛЮБОЙ захват: вражеской или спорной)
+let crateAwarded = false;
+if (oldControl !== loc.control && loc.control === player.faction) {
+    crateAwarded = true;
+    // Добавляем ящик в инвентарь
+    if (!player.inventory) player.inventory = { items: Array(16).fill(null), equipment: { helmet: null, weapon: null, armor: null, boots: null } };
+    const crateIndex = player.inventory.items.findIndex(i => i === null || i === 'crate');
+    if (crateIndex >= 0) {
+        player.inventory.items[crateIndex] = 'crate';
+    }
+}
             
             // СМЕРТЬ
             if (player.hp <= 0) {
